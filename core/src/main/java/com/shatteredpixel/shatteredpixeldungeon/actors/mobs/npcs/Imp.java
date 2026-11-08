@@ -395,7 +395,8 @@ public class Imp extends NPC {
 		}
 
 		public static boolean earnedShop() {
-			return completed && (oldQuest || score > 2000);
+			//Shattered Hull: não há lojas
+			return false;
 		}
 	}
 }

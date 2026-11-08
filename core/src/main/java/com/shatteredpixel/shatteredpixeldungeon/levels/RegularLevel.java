@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 import com.shatteredpixel.shatteredpixeldungeon.Bones;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.HullBalance;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -410,10 +411,10 @@ public abstract class RegularLevel extends Level {
 	@Override
 	protected void createItems() {
 		
-		//Shattered Hull: 1 carregador por andar, 40% de chance de um segundo
+		//Shattered Hull: 1 carregador por setor e chance de um segundo (HullBalance)
 		if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(ServiceRifle.class) != null){
 			addItemToSpawn(new Magazine());
-			if (Random.Float() < 0.4f) addItemToSpawn(new Magazine());
+			if (Random.Float() < HullBalance.SECOND_MAGAZINE_CHANCE) addItemToSpawn(new Magazine());
 		}
 
 		// drops 3/4/5 items 60%/30%/10% of the time

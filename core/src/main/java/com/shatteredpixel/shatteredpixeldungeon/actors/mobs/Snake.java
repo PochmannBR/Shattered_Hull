@@ -28,6 +28,10 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SnakeSprite;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Snake extends Mob {
@@ -53,6 +57,52 @@ public class Snake extends Mob {
 	@Override
 	public int attackSkill( Char target ) {
 		return 10;
+	}
+
+	//Shattered Hull: o emboscador causa dano dobrado no primeiro golpe
+	//quando chega sem ter sido visto pelo herói
+	private boolean ambushReady = true;
+	private int seenTurns = 0;
+
+	@Override
+	protected boolean act() {
+		if (Dungeon.level.heroFOV[pos]) {
+			seenTurns++;
+			if (seenTurns >= 2) ambushReady = false;
+		} else {
+			seenTurns = 0;
+			ambushReady = true;
+		}
+		return super.act();
+	}
+
+	@Override
+	public int attackProc( Char enemy, int damage ) {
+		damage = super.attackProc(enemy, damage);
+		if (ambushReady && enemy == Dungeon.hero && alignment == Alignment.ENEMY) {
+			damage *= 2;
+			ambushReady = false;
+			if (sprite != null) sprite.showStatus(CharSprite.NEGATIVE, Messages.get(this, "ambush_status"));
+			GLog.w(Messages.get(this, "ambush"));
+		}
+		return damage;
+	}
+
+	private static final String AMBUSH = "ambush_ready";
+	private static final String SEEN   = "seen_turns";
+
+	@Override
+	public void storeInBundle( Bundle bundle ) {
+		super.storeInBundle(bundle);
+		bundle.put(AMBUSH, ambushReady);
+		bundle.put(SEEN, seenTurns);
+	}
+
+	@Override
+	public void restoreFromBundle( Bundle bundle ) {
+		super.restoreFromBundle(bundle);
+		if (bundle.contains(AMBUSH)) ambushReady = bundle.getBoolean(AMBUSH);
+		if (bundle.contains(SEEN)) seenTurns = bundle.getInt(SEEN);
 	}
 
 	private static int dodges = 0;

@@ -38,6 +38,8 @@ public class Statistics {
 	public static int piranhasKilled;
 	public static int hazardAssistedKills;
 	public static int ankhsUsed;
+	//Shattered Hull: continue pago, 1 por missão
+	public static boolean continueUsed;
 	//tracks every item type 'seen' this run (i.e. would be added to catalogs)
 	public static HashSet<Class> itemTypesDiscovered = new HashSet<>();
 
@@ -88,6 +90,7 @@ public class Statistics {
 		piranhasKilled	= 0;
 		hazardAssistedKills = 0;
 		ankhsUsed		= 0;
+		continueUsed	= false;
 		itemTypesDiscovered.clear();
 
 		progressScore   = 0;
@@ -133,6 +136,7 @@ public class Statistics {
 	private static final String PIRANHAS	= "priranhas";
 	private static final String HAZARD_ASSISTS	= "hazard_assists";
 	private static final String ANKHS		= "ankhsUsed";
+	private static final String CONTINUE	= "hull_continue_used";
 
 	private static final String PROG_SCORE	    = "prog_score";
 	private static final String ITEM_VAL	    = "item_val";
@@ -176,6 +180,7 @@ public class Statistics {
 		bundle.put( PIRANHAS,	piranhasKilled );
 		bundle.put(HAZARD_ASSISTS, hazardAssistedKills);
 		bundle.put( ANKHS,		ankhsUsed );
+		bundle.put( CONTINUE,	continueUsed );
 		bundle.put( ITEM_TYPES_DISCOVERED, itemTypesDiscovered.toArray(new Class<?>[0]) );
 
 		bundle.put( PROG_SCORE,  progressScore );
@@ -223,6 +228,7 @@ public class Statistics {
 		piranhasKilled	= bundle.getInt( PIRANHAS );
 		hazardAssistedKills = bundle.getInt( HAZARD_ASSISTS );
 		ankhsUsed		= bundle.getInt( ANKHS );
+		continueUsed	= bundle.getBoolean( CONTINUE );
 
 		if (bundle.contains( ITEM_TYPES_DISCOVERED )) {
 			itemTypesDiscovered = new HashSet<>(Arrays.asList(bundle.getClassArray(ITEM_TYPES_DISCOVERED)));

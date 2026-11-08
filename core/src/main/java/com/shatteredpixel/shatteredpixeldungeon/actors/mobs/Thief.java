@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ThiefSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.watabou.utils.Random;
 
 public class Thief extends Mob {
@@ -70,6 +71,40 @@ public class Thief extends Mob {
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
 		item = (Item)bundle.get( ITEM );
+	}
+
+	//Shattered Hull: o pirata cata Laztro do chão
+	@Override
+	protected boolean act() {
+		if (alignment == Alignment.ENEMY && item == null && state != FLEEING && paralysed <= 0) {
+			Heap heap = Dungeon.level.heaps.get(pos);
+			if (heap != null && heap.type == Heap.Type.HEAP && heap.peek() instanceof Gold) {
+				item = heap.pickUp();
+				if (Dungeon.level.heroFOV[pos]) {
+					GLog.w(Messages.get(Thief.class, "grabbed", item.quantity()));
+					CellEmitter.get(pos).burst(Speck.factory(Speck.COIN), 4);
+				}
+				if (state == HUNTING) state = FLEEING;
+				spend( 1f );
+				return true;
+			}
+		}
+		return super.act();
+	}
+
+	private int nearestLaztro() {
+		int best = -1;
+		int bestDist = 9;
+		for (Heap heap : Dungeon.level.heaps.valueList()) {
+			if (heap.type != Heap.Type.HEAP || !(heap.peek() instanceof Gold)) continue;
+			if (fieldOfView == null || heap.pos >= fieldOfView.length || !fieldOfView[heap.pos]) continue;
+			int d = Dungeon.level.distance(pos, heap.pos);
+			if (d < bestDist) {
+				bestDist = d;
+				best = heap.pos;
+			}
+		}
+		return best;
 	}
 
 	@Override
@@ -183,6 +218,10 @@ public class Thief extends Mob {
 		
 		@Override
 		public boolean act(boolean enemyInFOV, boolean justAlerted) {
+			if (item == null && alignment == Alignment.ENEMY) {
+				int laztro = nearestLaztro();
+				if (laztro != -1) target = laztro;
+			}
 			super.act(enemyInFOV, justAlerted);
 			
 			//if an enemy is just noticed and the thief posses an item, run, don't fight.

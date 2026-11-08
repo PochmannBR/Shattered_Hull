@@ -122,6 +122,7 @@ public enum Rankings {
 		rec.score       = calculateScore();
 		rec.customSeed  = Dungeon.customSeedText;
 		rec.daily       = Dungeon.daily;
+		rec.continued   = Statistics.continueUsed;
 
 		Badges.validateHighScore( rec.score );
 		
@@ -489,6 +490,7 @@ public enum Rankings {
 		private static final String ID      = "gameID";
 		private static final String SEED    = "custom_seed";
 		private static final String DAILY   = "daily";
+		private static final String CONTINUED = "hull_continued";
 
 		private static final String DATE    = "date";
 		private static final String VERSION = "version";
@@ -510,11 +512,19 @@ public enum Rankings {
 
 		public String customSeed;
 		public boolean daily;
+		//Shattered Hull: missão salva pelo continue pago
+		public boolean continued;
 
 		public String date;
 		public String version;
 
 		public String desc(){
+			String d = baseDesc();
+			if (continued) d += " " + Messages.get(Rankings.class, "continued_tag");
+			return d;
+		}
+
+		private String baseDesc(){
 			if (win){
 				if (ascending){
 					return Messages.get(this, "ascended");
@@ -546,6 +556,7 @@ public enum Rankings {
 			score	    = bundle.getInt( SCORE );
 			customSeed  = bundle.getString( SEED );
 			daily       = bundle.getBoolean( DAILY );
+			continued   = bundle.getBoolean( CONTINUED );
 
 			heroClass	= bundle.getEnum( CLASS, HeroClass.class );
 			armorTier	= bundle.getInt( TIER );
@@ -576,6 +587,7 @@ public enum Rankings {
 			bundle.put( SCORE, score );
 			bundle.put( SEED, customSeed );
 			bundle.put( DAILY, daily );
+			bundle.put( CONTINUED, continued );
 
 			bundle.put( CLASS, heroClass );
 			bundle.put( TIER, armorTier );

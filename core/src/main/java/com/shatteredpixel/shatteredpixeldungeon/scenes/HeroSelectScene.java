@@ -153,6 +153,10 @@ public class HeroSelectScene extends PixelScene {
 				super.onClick();
 
 				if (GamesInProgress.selectedClass == null) return;
+				if (!GamesInProgress.selectedClass.isUnlocked()){
+					ShatteredPixelDungeon.scene().addToFront( new WndMessage(GamesInProgress.selectedClass.lockedInfo()));
+					return;
+				}
 
 				Dungeon.hero = null;
 				Dungeon.daily = Dungeon.dailyReplay = false;
@@ -174,7 +178,9 @@ public class HeroSelectScene extends PixelScene {
 			protected void onClick() {
 				super.onClick();
 				HeroClass cls = GamesInProgress.selectedClass;
-				if (cls != null) {
+				if (cls != null && !cls.isUnlocked()) {
+					ShatteredPixelDungeon.scene().addToFront( new WndMessage(cls.lockedInfo()));
+				} else if (cls != null) {
 					Window info = new WndHeroInfo(GamesInProgress.selectedClass);
 					if (landscape()) {
 						info.offset((int)(w / 6), 0);
@@ -425,6 +431,7 @@ public class HeroSelectScene extends PixelScene {
 		}
 		background.visible = true;
 		background.hardlight(1.5f,1.5f,1.5f);
+		if (!cl.isUnlocked()) background.hardlight(0.9f,0.9f,0.9f);
 
 		float leftPortion = Math.max(100, (Camera.main.width - insets.left - insets.right)/3f);
 
@@ -449,6 +456,7 @@ public class HeroSelectScene extends PixelScene {
 			btnFade.visible = btnFade.active = true;
 
 			startBtn.visible = startBtn.active = true;
+			startBtn.alpha(cl.isUnlocked() ? 1f : 0.4f);
 
 			infoButton.visible = infoButton.active = true;
 			infoButton.setPos(heroName.right(), heroName.top() + (heroName.height() - infoButton.height())/2f);
@@ -460,6 +468,7 @@ public class HeroSelectScene extends PixelScene {
 			title.visible = false;
 
 			startBtn.visible = startBtn.active = true;
+			startBtn.alpha(cl.isUnlocked() ? 1f : 0.4f);
 			startBtn.text(Messages.titleCase(cl.title()));
 			startBtn.setSize(startBtn.reqWidth() + 8, 21);
 
@@ -596,8 +605,10 @@ public class HeroSelectScene extends PixelScene {
 		protected void onClick() {
 			super.onClick();
 
-			if( !cl.isUnlocked() ){
-				ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
+			if( !cl.isUnlocked() && GamesInProgress.selectedClass == cl ){
+				ShatteredPixelDungeon.scene().addToFront( new WndMessage(cl.lockedInfo()));
+			} else if( !cl.isUnlocked() ){
+				setSelectedHero(cl);
 			} else if (GamesInProgress.selectedClass == cl) {
 				Window w = new WndHeroInfo(cl);
 				if (landscape()){

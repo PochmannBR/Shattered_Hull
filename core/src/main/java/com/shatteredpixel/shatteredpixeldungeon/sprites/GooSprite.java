@@ -149,7 +149,7 @@ public class GooSprite extends MobSprite {
 
 	@Override
 	public int blood() {
-		return 0xFF000000;
+		return 0xFF9CFF3C; //Shattered Hull
 	}
 
 	public void spray(boolean on){
@@ -180,7 +180,7 @@ public class GooSprite extends MobSprite {
 		public GooParticle() {
 			super();
 
-			color( 0x000000 );
+			color( 0x7D3070 ); //Shattered Hull
 			lifespan = 0.3f;
 
 			acc.set( 0, +50 );
