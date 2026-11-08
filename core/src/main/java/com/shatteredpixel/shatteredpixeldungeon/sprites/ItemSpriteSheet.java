@@ -397,6 +397,19 @@ public class ItemSpriteSheet {
 
 	                                                                                    //16 free slots
 
+	//Shattered Hull: linha 13 da folha estava livre
+	private static final int SHATTERED_HULL     =                           xy(1, 13);  //16 slots
+	public static final int SERVICE_RIFLE       = SHATTERED_HULL+0;
+	public static final int RIFLE_BULLET        = SHATTERED_HULL+1;
+	public static final int MAGAZINE            = SHATTERED_HULL+2;
+	public static final int MAGAZINE_PARTIAL    = SHATTERED_HULL+3;
+	static{
+		assignItemRect(SERVICE_RIFLE,    16, 16);
+		assignItemRect(RIFLE_BULLET,     11, 11);
+		assignItemRect(MAGAZINE,         11, 14);
+		assignItemRect(MAGAZINE_PARTIAL, 11, 14);
+	}
+
 	private static final int WANDS              =                           xy(1, 14);  //16 slots
 	public static final int WAND_MAGIC_MISSILE  = WANDS+0;
 	public static final int WAND_FIREBOLT       = WANDS+1;
