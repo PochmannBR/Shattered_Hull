@@ -18,7 +18,7 @@ allprojects {
         //Shattered Hull: mantemos o código de versão do Shattered Pixel Dungeon 4.0.2 como ponto de partida,
         //como recomenda docs/recommended-changes.md, porque o jogo tem código de compatibilidade ligado a ele.
         appVersionCode = 922
-        appVersionName = '0.1.0'
+        appVersionName = '0.4.0'
 
         appJavaCompatibility = JavaVersion.VERSION_11
 

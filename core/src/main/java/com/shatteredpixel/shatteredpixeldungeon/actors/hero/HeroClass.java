@@ -331,23 +331,13 @@ public enum HeroClass {
 	}
 	
 	public boolean isUnlocked(){
-		//always unlock on debug builds
-		if (DeviceCompat.isDebug()) return true;
+		//Shattered Hull: só o Fuzileiro está pronto. As outras classes aparecem
+		//na seleção apenas com retrato e descrição, mesmo em builds de debug.
+		return this == WARRIOR;
+	}
 
-		switch (this){
-			case WARRIOR: default:
-				return true;
-			case MAGE:
-				return Badges.isUnlocked(Badges.Badge.UNLOCK_MAGE);
-			case ROGUE:
-				return Badges.isUnlocked(Badges.Badge.UNLOCK_ROGUE);
-			case HUNTRESS:
-				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
-			case DUELIST:
-				return Badges.isUnlocked(Badges.Badge.UNLOCK_DUELIST);
-			case CLERIC:
-				return Badges.isUnlocked(Badges.Badge.UNLOCK_CLERIC);
-		}
+	public String lockedInfo() {
+		return desc() + "\n\n" + Messages.get(HeroClass.class, name()+"_unlock");
 	}
 	
 	public String unlockMsg() {

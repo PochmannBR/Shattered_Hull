@@ -118,6 +118,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.keys.WornKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfDivineInspiration;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.DarkGold;
@@ -178,6 +179,8 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndContinue;
+import com.shatteredpixel.shatteredpixeldungeon.HullContinue;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
@@ -2233,9 +2236,62 @@ public class Hero extends Char {
 			return;
 		}
 		
+		//Shattered Hull: oferece o continue pago antes da morte definitiva
+		if (HullContinue.canOffer()) {
+			interrupt();
+			WndResurrect.instance = new Object();
+			final Object finalCause = cause;
+			Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
+					GameScene.show( new WndContinue(finalCause) );
+				}
+			});
+			return;
+		}
+
+		finishDeath( cause );
+	}
+
+	public void finishDeath( Object cause ) {
 		Actor.fixTime();
 		super.die( cause );
 		reallyDie( cause );
+	}
+
+	//Shattered Hull: volta no início do setor com metade da vida.
+	//Munição, remédios e itens ficam como estavam.
+	public void continueRevive() {
+		HP = Math.max(1, HT / 2);
+		PotionOfHealing.cure(this);
+		Buff.prolong(this, Invulnerability.class, 3f);
+
+		int dest = pos;
+		if (!Dungeon.level.locked) {
+			int entrance = Dungeon.level.entrance();
+			if (entrance >= 0 && Actor.findChar(entrance) == null) {
+				dest = entrance;
+			} else if (entrance >= 0) {
+				for (int n : PathFinder.NEIGHBOURS8) {
+					int c = entrance + n;
+					if (c >= 0 && c < Dungeon.level.length() && Dungeon.level.passable[c]
+							&& Actor.findChar(c) == null) {
+						dest = c;
+						break;
+					}
+				}
+			}
+		}
+		if (dest != pos) {
+			ScrollOfTeleportation.appear(this, dest);
+			Dungeon.level.occupyCell(this);
+			Dungeon.observe();
+			GameScene.updateFog();
+		}
+
+		GameScene.flash(0x8040C0FF);
+		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
+		GLog.p(Messages.get(this, "continue_revive"));
 	}
 	
 	public static void reallyDie( Object cause ) {

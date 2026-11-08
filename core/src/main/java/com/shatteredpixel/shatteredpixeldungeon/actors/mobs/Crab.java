@@ -24,7 +24,19 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CrabSprite;
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class Crab extends Mob {
 
@@ -55,5 +67,68 @@ public class Crab extends Mob {
 	@Override
 	public int drRoll() {
 		return super.drRoll() + Random.NormalIntRange(0, 4);
+	}
+
+	//Shattered Hull: o escavador se enterra e reaparece ao lado do alvo
+	private int burrowCooldown = 4;
+
+	@Override
+	protected boolean act() {
+		if (burrowCooldown > 0) burrowCooldown--;
+
+		if (paralysed <= 0 && state == HUNTING && enemy != null && enemy.isAlive()
+				&& alignment == Alignment.ENEMY && burrowCooldown <= 0
+				&& Dungeon.level.distance(pos, enemy.pos) >= 3 && Random.Int(3) == 0) {
+			int cell = emergeCell(enemy.pos);
+			if (cell != -1) {
+				burrowTo(cell);
+				burrowCooldown = 10;
+				spend( 1f );
+				return true;
+			}
+		}
+		return super.act();
+	}
+
+	private int emergeCell( int target ){
+		ArrayList<Integer> cells = new ArrayList<>();
+		for (int n : PathFinder.NEIGHBOURS8){
+			int c = target + n;
+			if (c >= 0 && c < Dungeon.level.length() && Dungeon.level.passable[c]
+					&& !Dungeon.level.solid[c] && Actor.findChar(c) == null
+					&& !Dungeon.level.pit[c]){
+				cells.add(c);
+			}
+		}
+		return cells.isEmpty() ? -1 : Random.element(cells);
+	}
+
+	private void burrowTo( int cell ){
+		boolean seenFrom = Dungeon.level.heroFOV[pos];
+		if (seenFrom) CellEmitter.get(pos).burst(Speck.factory(Speck.ROCK), 6);
+		move(cell, false);
+		if (sprite != null) {
+			sprite.place(cell);
+			sprite.visible = Dungeon.level.heroFOV[cell];
+		}
+		if (Dungeon.level.heroFOV[cell]) {
+			CellEmitter.get(cell).burst(Speck.factory(Speck.ROCK), 8);
+			Sample.INSTANCE.play(Assets.Sounds.ROCKS, 0.6f, 1.4f);
+			GLog.w(Messages.get(this, "burrow"));
+		}
+	}
+
+	private static final String BURROW_CD = "burrow_cd";
+
+	@Override
+	public void storeInBundle( Bundle bundle ) {
+		super.storeInBundle(bundle);
+		bundle.put(BURROW_CD, burrowCooldown);
+	}
+
+	@Override
+	public void restoreFromBundle( Bundle bundle ) {
+		super.restoreFromBundle(bundle);
+		if (bundle.contains(BURROW_CD)) burrowCooldown = bundle.getInt(BURROW_CD);
 	}
 }

@@ -125,6 +125,8 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndContinue;
+import com.shatteredpixel.shatteredpixeldungeon.HullContinue;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUpgrade;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Blending;
@@ -789,6 +791,8 @@ public class GameScene extends PixelScene {
 			}
 			if (ankh != null && GamesInProgress.gameExists(GamesInProgress.curSlot)) {
 				add(new WndResurrect(ankh));
+			} else if (HullContinue.canOffer() && GamesInProgress.gameExists(GamesInProgress.curSlot)) {
+				add(new WndContinue(null));
 			} else {
 				gameOver();
 			}
