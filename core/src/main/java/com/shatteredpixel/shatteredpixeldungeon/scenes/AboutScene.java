@@ -23,6 +23,9 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -64,6 +67,26 @@ public class AboutScene extends PixelScene {
 		Component content = list.content();
 		content.clear();
 
+		//*** Shattered Hull Credits ***
+
+		final int HULL_COLOR = 0x5CE1E6;
+		CreditsBlock hull = new CreditsBlock(true, HULL_COLOR,
+				"Shattered Hull",
+				new ItemSprite(ItemSpriteSheet.SERVICE_RIFLE),
+				Messages.get(this, "hull_body"),
+				"github.com/PochmannBR",
+				"https://github.com/PochmannBR/Shattered_Hull");
+		hull.setRect((w - colWidth)/2f, insets.top + 6, colWidth, 0);
+		content.add(hull);
+
+		RenderedTextBlock license = PixelScene.renderTextBlock(Messages.get(this, "hull_license"), 6);
+		license.maxWidth((int)colWidth);
+		license.hardlight(0xBBBBBB);
+		license.setPos((w - license.width())/2f, hull.bottom() + 4);
+		content.add(license);
+
+		float creditsTop = license.bottom() + 10;
+
 		//*** Shattered Pixel Dungeon Credits ***
 
 		CreditsBlock shpx = new CreditsBlock(true, Window.SHPX_COLOR,
@@ -73,11 +96,13 @@ public class AboutScene extends PixelScene {
 				"ShatteredPixel.com",
 				"https://ShatteredPixel.com");
 		if (landscape()){
-			shpx.setRect((w - fullWidth)/2f - 6, insets.top + 26, 120, 0);
+			shpx.setRect((w - fullWidth)/2f - 6, creditsTop + 20, 120, 0);
 		} else {
-			shpx.setRect((w - fullWidth)/2f, insets.top + 6, 120, 0);
+			shpx.setRect((w - fullWidth)/2f, creditsTop, 120, 0);
 		}
 		content.add(shpx);
+
+		addLine(creditsTop - 5, content);
 
 		CreditsBlock aleks = new CreditsBlock(false, Window.SHPX_COLOR,
 				"Splash & Dungeon Art:",
@@ -87,7 +112,7 @@ public class AboutScene extends PixelScene {
 				"https://www.alekskomitov.com/");
 		aleks.setSize(colWidth/2f, 0);
 		if (landscape()){
-			aleks.setPos(shpx.right(), insets.top+6);
+			aleks.setPos(shpx.right(), creditsTop);
 		} else {
 			aleks.setPos(w/2f - colWidth/2f, shpx.bottom()+6);
 		}
