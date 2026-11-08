@@ -431,7 +431,9 @@ public class Dungeon {
 	}
 	
 	public static boolean shopOnLevel() {
-		return depth == 6 || depth == 11 || depth == 16;
+		//Shattered Hull: não há lojas. Os piratas são catadores hostis, e o Laztro
+		//será gasto apenas nos fabricadores raros da Vigília-7.
+		return false;
 	}
 	
 	public static boolean bossLevel() {
