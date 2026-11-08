@@ -40,6 +40,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.Magazine;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.ServiceRifle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
@@ -376,6 +378,12 @@ public abstract class RegularLevel extends Level {
 	@Override
 	protected void createItems() {
 		
+		//Shattered Hull: 1 carregador por andar, 40% de chance de um segundo
+		if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(ServiceRifle.class) != null){
+			addItemToSpawn(new Magazine());
+			if (Random.Float() < 0.4f) addItemToSpawn(new Magazine());
+		}
+
 		// drops 3/4/5 items 60%/30%/10% of the time
 		int nItems = 3 + Random.chances(new float[]{6, 3, 1});
 

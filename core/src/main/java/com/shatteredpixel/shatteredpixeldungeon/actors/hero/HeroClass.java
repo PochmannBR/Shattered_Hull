@@ -48,6 +48,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.He
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.Magazine;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.ServiceRifle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClothArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
@@ -172,11 +174,12 @@ public enum HeroClass {
 	}
 
 	private static void initWarrior( Hero hero ) {
-		(hero.belongings.weapon = new WornShortsword()).identify();
-		ThrowingStone stones = new ThrowingStone();
-		stones.identify().collect();
+		//Shattered Hull: fuzil de serviço com um carregador inserido e um de reserva
+		ServiceRifle rifle = new ServiceRifle();
+		(hero.belongings.weapon = rifle).identify();
+		new Magazine().collect();
 
-		Dungeon.quickslot.setSlot(0, stones);
+		Dungeon.quickslot.setSlot(0, rifle);
 
 		if (hero.belongings.armor != null){
 			hero.belongings.armor.affixSeal(new BrokenSeal());
