@@ -49,7 +49,8 @@ public class WornKey extends Key {
 
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
-		if(!SPDSettings.supportNagged()){
+		//Shattered Hull: janela de pedido de apoio desligada
+		if(false && !SPDSettings.supportNagged()){
 			try {
 				Dungeon.saveAll();
 				Game.runOnRenderThread(new Callback() {
