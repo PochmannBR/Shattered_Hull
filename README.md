@@ -1,27 +1,28 @@
-# Shattered Pixel Dungeon
+# Shattered Hull
 
-[Shattered Pixel Dungeon](https://shatteredpixel.com/shatteredpd/) is an open-source traditional roguelike dungeon crawler with randomized levels and enemies, and hundreds of items to collect and use. It's based on the [source code of Pixel Dungeon](https://github.com/00-Evan/pixel-dungeon-gradle), by [Watabou](https://watabou.itch.io/).
+Shattered Hull é um roguelike por turnos de ficção científica militar. Um soldado da Brigada Orbital sobrevive à queda de uma nave de combate num planeta tomado pelo Enxame Vórtice e precisa descer, setor por setor, até a rainha do enxame.
 
-Shattered Pixel Dungeon currently compiles for Android, iOS, and Desktop platforms. You can find official releases of the game on:
+O jogo é uma versão derivada do [Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon), de Evan Debenham, que por sua vez se baseia no [Pixel Dungeon](https://github.com/00-Evan/pixel-dungeon-gradle), de Watabou. Esta cópia parte do Shattered Pixel Dungeon v4.0.2, commit `57a4e06`.
 
-[![Get it on Google Play](https://shatteredpixel.com/assets/images/badges/gplay.png)](https://play.google.com/store/apps/details?id=com.shatteredpixel.shatteredpixeldungeon)
-[![Download on the App Store](https://shatteredpixel.com/assets/images/badges/appstore.png)](https://apps.apple.com/app/shattered-pixel-dungeon/id1563121109)
-[![Steam](https://shatteredpixel.com/assets/images/badges/steam.png)](https://store.steampowered.com/app/1769170/Shattered_Pixel_Dungeon/)<br>
-[![GOG.com](https://shatteredpixel.com/assets/images/badges/gog.png)](https://www.gog.com/game/shattered_pixel_dungeon)
-[![Itch.io](https://shatteredpixel.com/assets/images/badges/itch.png)](https://shattered-pixel.itch.io/shattered-pixel-dungeon)
-[![Github Releases](https://shatteredpixel.com/assets/images/badges/github.png)](https://github.com/00-Evan/shattered-pixel-dungeon/releases)
+Projeto em desenvolvimento por Pablo Pochmann, com publicação prevista pela Insane Goblin.
 
-If you like this game, please consider [supporting me on Patreon](https://www.patreon.com/ShatteredPixel)!
+## Licença
 
-There is an official blog for this project at [ShatteredPixel.com](https://www.shatteredpixel.com/blog/).
+Assim como o jogo original, o código deste repositório é distribuído sob a licença GNU GPLv3, cujo texto está em [LICENSE.txt](LICENSE.txt). Os créditos dos autores originais são mantidos no jogo e neste repositório.
 
-The game also has a translation project hosted on [Transifex](https://explore.transifex.com/shattered-pixel/shattered-pixel-dungeon/).
+## O que já mudou em relação ao original
 
-Note that **this repository does not accept pull requests!** The code here is provided in hopes that others may find it useful for their own projects, not to allow community contribution. Issue reports of all kinds (bug reports, feature requests, etc.) are welcome.
+- Nome do aplicativo, identificador `com.insanegoblin.shatteredhull` e versão 0.1.0.
+- Botão de apoio, janela de pedido de apoio, notícias e aviso de atualização do Shattered Pixel Dungeon desligados.
+- Classe Guerreiro renomeada para Fuzileiro em português e Marine em inglês. Mecânicas e visual ainda são os originais.
 
-If you'd like to work with the code, you can find the following guides in `/docs`:
-- [Compiling for Android.](docs/getting-started-android.md)
-    - **[If you plan to distribute on Google Play please read the end of this guide.](docs/getting-started-android.md#distributing-your-app)**
-- [Compiling for desktop platforms.](docs/getting-started-desktop.md)
-- [Compiling for iOS.](docs/getting-started-ios.md)
-- [Recommended changes for making your own version.](docs/recommended-changes.md)
+## Como compilar
+
+Os guias do projeto original continuam válidos e estão em `docs`:
+
+- [Compilar para desktop](docs/getting-started-desktop.md)
+- [Compilar para Android](docs/getting-started-android.md)
+- [Compilar para iOS](docs/getting-started-ios.md)
+- [Mudanças recomendadas para versões derivadas](docs/recommended-changes.md)
+
+O projeto original mantém um repositório que não aceita contribuições. Problemas e sugestões sobre o Shattered Hull devem ser registrados neste repositório.
