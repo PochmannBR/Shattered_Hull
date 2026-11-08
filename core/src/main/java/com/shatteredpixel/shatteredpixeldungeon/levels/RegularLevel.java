@@ -39,6 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Fabricator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.hull.Magazine;
 import com.shatteredpixel.shatteredpixeldungeon.items.hull.ServiceRifle;
@@ -220,6 +221,8 @@ public abstract class RegularLevel extends Level {
 	
 	@Override
 	protected void createMobs() {
+		spawnFabricator();
+
 		//on floor 1, 8 pre-set mobs are created so the player can get level 2.
 		int mobsToSpawn = Dungeon.depth == 1 ? 8 : mobLimit();
 
@@ -375,6 +378,35 @@ public abstract class RegularLevel extends Level {
 		}
 	}
 	
+	//Shattered Hull: fabricador raro, longe da entrada e da saída quando possível
+	private void spawnFabricator(){
+		Fabricator.Type fabType = Fabricator.typeForDepth(Dungeon.depth);
+		if (fabType == null || Dungeon.branch != 0) return;
+
+		ArrayList<Room> fabRooms = new ArrayList<>();
+		for (Room r : rooms) {
+			if (r instanceof StandardRoom && r != roomEntrance && r != roomExit) fabRooms.add(r);
+		}
+		if (fabRooms.isEmpty()) {
+			for (Room r : rooms) {
+				if (r instanceof StandardRoom && r != roomEntrance) fabRooms.add(r);
+			}
+		}
+		if (fabRooms.isEmpty()) return;
+
+		Fabricator fab = new Fabricator().setType(fabType);
+		Room room = Random.element(fabRooms);
+		int tries = 100;
+		do {
+			fab.pos = pointToCell(room.random());
+			tries--;
+		} while (tries > 0 && (fab.pos == -1 || solid[fab.pos] || !openSpace[fab.pos]
+				|| findMob(fab.pos) != null || fab.pos == exit() || fab.pos == entrance()));
+		if (tries > 0) {
+			mobs.add(fab);
+		}
+	}
+
 	@Override
 	protected void createItems() {
 		

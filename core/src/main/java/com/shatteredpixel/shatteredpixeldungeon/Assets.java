@@ -295,6 +295,7 @@ public class Assets {
 		public static final String SKELETON = "sprites/skeleton.png";
 		public static final String SHAMAN   = "sprites/shaman.png";
 		public static final String SPITTER  = "sprites/spitter.png"; //Shattered Hull
+		public static final String FABRICATOR = "sprites/fabricator.png"; //Shattered Hull
 		public static final String THIEF    = "sprites/thief.png";
 		public static final String TENGU    = "sprites/tengu.png";
 		public static final String SHEEP    = "sprites/sheep.png";
