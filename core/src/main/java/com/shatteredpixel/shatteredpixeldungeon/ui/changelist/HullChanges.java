@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FabricatorSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GooSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -40,13 +41,19 @@ import java.util.ArrayList;
 public class HullChanges {
 
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
+		add( changeInfos, "v0.5.0", new ChangeButton[]{
+				new ChangeButton(Icons.get(Icons.STAIRS), msg("v050_story_title"), msg("v050_story")),
+				new ChangeButton(new ItemSprite(ItemSpriteSheet.WAND_MAGIC_MISSILE), msg("v050_items_title"), msg("v050_items")),
+				new ChangeButton(Icons.get(Icons.TALENT), msg("v050_marine_title"), msg("v050_marine")),
+				new ChangeButton(new GhostSprite(), msg("v050_npcs_title"), msg("v050_npcs")),
+				new ChangeButton(new FabricatorSprite(), msg("v040_recycle_title"), msg("v040_recycle")),
+		});
 		add( changeInfos, "v0.4.0", new ChangeButton[]{
 				new ChangeButton(new GooSprite(), msg("v040_boss_title"), msg("v040_boss")),
 				new ChangeButton(Icons.get(Icons.TALENT), msg("v040_enemies_title"), msg("v040_enemies")),
 				new ChangeButton(Icons.get(Icons.WARNING), msg("v040_continue_title"), msg("v040_continue")),
 				new ChangeButton(Icons.get(Icons.PREFS), msg("v040_balance_title"), msg("v040_balance")),
 				new ChangeButton(Icons.get(Icons.ENTER), msg("v040_classes_title"), msg("v040_classes")),
-				new ChangeButton(new FabricatorSprite(), msg("v040_recycle_title"), msg("v040_recycle")),
 		});
 		add( changeInfos, "v0.3.0", new ChangeButton[]{
 				new ChangeButton(new FabricatorSprite(), msg("v030_fab_title"), msg("v030_fab")),
