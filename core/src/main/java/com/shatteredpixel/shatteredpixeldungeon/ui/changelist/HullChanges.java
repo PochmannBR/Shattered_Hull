@@ -46,6 +46,7 @@ public class HullChanges {
 				new ChangeButton(Icons.get(Icons.WARNING), msg("v040_continue_title"), msg("v040_continue")),
 				new ChangeButton(Icons.get(Icons.PREFS), msg("v040_balance_title"), msg("v040_balance")),
 				new ChangeButton(Icons.get(Icons.ENTER), msg("v040_classes_title"), msg("v040_classes")),
+				new ChangeButton(new FabricatorSprite(), msg("v040_recycle_title"), msg("v040_recycle")),
 		});
 		add( changeInfos, "v0.3.0", new ChangeButton[]{
 				new ChangeButton(new FabricatorSprite(), msg("v030_fab_title"), msg("v030_fab")),
