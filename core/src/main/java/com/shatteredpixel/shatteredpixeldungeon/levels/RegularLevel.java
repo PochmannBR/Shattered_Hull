@@ -414,7 +414,9 @@ public abstract class RegularLevel extends Level {
 		//Shattered Hull: 1 carregador por setor e chance de um segundo (HullBalance)
 		if (Dungeon.hero != null && Dungeon.hero.belongings.getItem(ServiceRifle.class) != null){
 			addItemToSpawn(new Magazine());
-			if (Random.Float() < HullBalance.SECOND_MAGAZINE_CHANCE) addItemToSpawn(new Magazine());
+			//munição de reserva: +25% de chance por ponto (75%/100%)
+			float second = HullBalance.SECOND_MAGAZINE_CHANCE + 0.25f*Dungeon.hero.pointsInTalent(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.AMMO_RESERVE);
+			if (Random.Float() < second) addItemToSpawn(new Magazine());
 		}
 
 		// drops 3/4/5 items 60%/30%/10% of the time

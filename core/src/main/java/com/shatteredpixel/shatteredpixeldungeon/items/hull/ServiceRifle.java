@@ -173,7 +173,8 @@ public class ServiceRifle extends MeleeWeapon {
 		Sample.INSTANCE.play(Assets.Sounds.UNLOCK, 1f, 0.8f);
 		hero.sprite.operate(hero.pos);
 		updateQuickslot();
-		hero.spendAndNext(1f);
+		//Shattered Hull: recarga rápida, 0.75 turno com +1 e meio turno com +2
+		hero.spendAndNext(1f - 0.25f*hero.pointsInTalent(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.QUICK_RELOAD));
 	}
 
 	@Override

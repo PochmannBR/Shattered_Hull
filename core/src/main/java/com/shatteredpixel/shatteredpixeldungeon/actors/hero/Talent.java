@@ -111,6 +111,8 @@ public enum Talent {
 	EXPANDING_WAVE(20, 4), STRIKING_WAVE(21, 4), SHOCK_FORCE(22, 4),
 	//Endure T4
 	SUSTAINED_RETRIBUTION(23, 4), SHRUG_IT_OFF(24, 4), EVEN_THE_ODDS(25, 4),
+	//Shattered Hull: talentos do fuzil (T1, T2, T3)
+	QUICK_RELOAD(27), AMMO_RESERVE(28), STUNNING_BUTT(29, 3),
 
 	//Mage T1
 	EMPOWERING_MEAL(32), SCHOLARS_INTUITION(33), LINGERING_MAGIC(34), BACKUP_BARRIER(35),
@@ -867,6 +869,15 @@ public enum Talent {
 
 	public static int onAttackProc( Hero hero, Char enemy, int dmg ){
 
+		//Shattered Hull: coronhada atordoante, só no corpo a corpo com o fuzil
+		if (hero.hasTalent(Talent.STUNNING_BUTT)
+				&& hero.belongings.attackingWeapon() instanceof com.shatteredpixel.shatteredpixeldungeon.items.hull.ServiceRifle
+				&& enemy.isAlive() && !enemy.properties().contains(Char.Property.BOSS)
+				&& Random.Int(10) < hero.pointsInTalent(Talent.STUNNING_BUTT)){
+			com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff.prolong(enemy,
+					com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis.class, 2f);
+		}
+
 		if (hero.hasTalent(Talent.PROVOKED_ANGER)
 			&& hero.buff(ProvokedAngerTracker.class) != null){
 			dmg += 1 + 2*hero.pointsInTalent(Talent.PROVOKED_ANGER);
@@ -977,7 +988,7 @@ public enum Talent {
 		//tier 1
 		switch (cls){
 			case WARRIOR: default:
-				Collections.addAll(tierTalents, HEARTY_MEAL, VETERANS_INTUITION, PROVOKED_ANGER, IRON_WILL);
+				Collections.addAll(tierTalents, HEARTY_MEAL, VETERANS_INTUITION, PROVOKED_ANGER, IRON_WILL, QUICK_RELOAD);
 				break;
 			case MAGE:
 				Collections.addAll(tierTalents, EMPOWERING_MEAL, SCHOLARS_INTUITION, LINGERING_MAGIC, BACKUP_BARRIER);
@@ -1006,7 +1017,7 @@ public enum Talent {
 		//tier 2
 		switch (cls){
 			case WARRIOR: default:
-				Collections.addAll(tierTalents, IRON_STOMACH, LIQUID_WILLPOWER, RUNIC_TRANSFERENCE, LETHAL_MOMENTUM, IMPROVISED_PROJECTILES);
+				Collections.addAll(tierTalents, IRON_STOMACH, LIQUID_WILLPOWER, RUNIC_TRANSFERENCE, LETHAL_MOMENTUM, IMPROVISED_PROJECTILES, AMMO_RESERVE);
 				break;
 			case MAGE:
 				Collections.addAll(tierTalents, ENERGIZING_MEAL, INSCRIBED_POWER, WAND_PRESERVATION, ARCANE_VISION, SHIELD_BATTERY);
@@ -1035,7 +1046,7 @@ public enum Talent {
 		//tier 3
 		switch (cls){
 			case WARRIOR: default:
-				Collections.addAll(tierTalents, HOLD_FAST, STRONGMAN);
+				Collections.addAll(tierTalents, HOLD_FAST, STRONGMAN, STUNNING_BUTT);
 				break;
 			case MAGE:
 				Collections.addAll(tierTalents, DESPERATE_POWER, ALLY_WARP);

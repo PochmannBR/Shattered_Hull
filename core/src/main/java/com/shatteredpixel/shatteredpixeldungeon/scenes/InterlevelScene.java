@@ -117,6 +117,33 @@ public class InterlevelScene extends PixelScene {
 		inGameScene = true;
 	}
 	
+	//Shattered Hull: histórias com mais de uma página
+	private int[] storyPages;
+	private int storyPage;
+	private int storyRegion;
+
+	private static String storyText( int page ){
+		String title = Document.INTROS.pageTitle(page);
+		return "_" + title + "_\n\n" + Document.INTROS.pageBody(page);
+	}
+
+	private boolean nextStoryPage(){
+		if (storyPages == null || storyPage >= storyPages.length-1) return false;
+		storyPage++;
+		float w = Camera.main.width - insets.left - insets.right;
+		float h = Camera.main.height - insets.top - insets.bottom;
+		storyMessage.text(storyText(storyPages[storyPage]));
+		storyMessage.setPos(insets.left+(w-storyMessage.width())/2f, insets.top+(h-storyMessage.height())/2f);
+		align(storyMessage);
+		storyBG.boxRect(storyMessage.left()-10, storyMessage.top()-10, storyMessage.width()+20, storyMessage.height()+20);
+		btnContinue.setPos(insets.left + (w - btnContinue.width())/2f, storyMessage.bottom()+10);
+		align(btnContinue);
+		btnHideStory.setRect(btnContinue.right()+2, btnContinue.top(), 20, 21);
+		align(btnHideStory);
+		Document.INTROS.readPage(storyPages[storyPage-1]);
+		return true;
+	}
+
 	@Override
 	public void create() {
 		super.create();
@@ -214,9 +241,10 @@ public class InterlevelScene extends PixelScene {
 			}
 		Random.popGenerator();
 		
-		if (DeviceCompat.isDebug()){
-			fadeTime = 0f;
-		}
+		//Shattered Hull: o APK de teste também mostra as transições e a história
+		//if (DeviceCompat.isDebug()){
+		//	fadeTime = 0f;
+		//}
 
 		insets = Game.platform.getSafeInsets(PlatformSupport.INSET_BLK).scale(1f/defaultZoom);
 
@@ -276,9 +304,13 @@ public class InterlevelScene extends PixelScene {
 		align(loadingText);
 		add(loadingText);
 
-		if (mode == Mode.DESCEND && lastRegion <= 5 && !DeviceCompat.isDebug()){
+		if (mode == Mode.DESCEND && lastRegion <= 5){
 			if (Dungeon.hero == null || (loadingDepth > Statistics.deepestFloor && loadingDepth % 5 == 1)){
-					storyMessage = PixelScene.renderTextBlock(Document.INTROS.pageBody(region), 6);
+					//Shattered Hull: missão nova abre com a queda da Vigília-7 e depois o setor
+					storyPages = (Dungeon.hero == null && region == 1) ? new int[]{0, region} : new int[]{region};
+					storyPage = 0;
+					storyRegion = region;
+					storyMessage = PixelScene.renderTextBlock(storyText(storyPages[0]), 6);
 					storyMessage.maxWidth( PixelScene.landscape() ? 180 : 125);
 					storyMessage.setPos(insets.left+(w-storyMessage.width())/2f, insets.top+(h-storyMessage.height())/2f);
 
@@ -291,6 +323,7 @@ public class InterlevelScene extends PixelScene {
 					btnContinue = new StyledButton(Chrome.Type.TOAST_TR, Messages.get(InterlevelScene.class, "continue"), 9){
 						@Override
 						protected void onClick() {
+							if (nextStoryPage()) return;
 							phase = Phase.FADE_OUT;
 							timeLeft = fadeTime;
 
@@ -324,6 +357,7 @@ public class InterlevelScene extends PixelScene {
 										}
 									});
 								} else {
+									if (nextStoryPage()) return true;
 									phase = Phase.FADE_OUT;
 									timeLeft = fadeTime;
 									btnContinue.enable(false);
