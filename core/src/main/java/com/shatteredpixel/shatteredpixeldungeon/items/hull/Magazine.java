@@ -96,7 +96,8 @@ public class Magazine extends Item {
 
 	@Override
 	public int value() {
-		return 3 * quantity;
+		//desmontado num fabricador, um carregador cheio rende 25 LZ
+		return Math.max(1, Math.round(25f * rounds / CAPACITY)) * quantity;
 	}
 
 	private static final String ROUNDS = "rounds";

@@ -44,6 +44,9 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FabricatorSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
@@ -201,6 +204,7 @@ public class Fabricator extends NPC {
 	private void showPanel( String product, String msg ){
 		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()), msg,
 				Messages.get(this, "craft", product, type.price),
+				Messages.get(this, "dismantle"),
 				Messages.get(this, "leave")){
 			@Override
 			protected boolean enabled( int index ) {
@@ -213,8 +217,57 @@ public class Fabricator extends NPC {
 			@Override
 			protected void onSelect( int index ) {
 				if (index == 0) craft();
+				else if (index == 1) chooseDismantle();
 			}
 		});
+	}
+
+	//Shattered Hull: desmontar converte um item da mochila em Laztro.
+	//Funciona mesmo com o núcleo sem energia, porque reciclar não gasta carga.
+	public static boolean canDismantle( Item item ){
+		if (item instanceof ServiceRifle) return false;
+		return Shopkeeper.canSell(item);
+	}
+
+	private void chooseDismantle(){
+		GameScene.selectItem(new WndBag.ItemSelector() {
+			@Override
+			public String textPrompt() {
+				return Messages.get(Fabricator.class, "dismantle_prompt");
+			}
+
+			@Override
+			public boolean itemSelectable( Item item ) {
+				return canDismantle(item);
+			}
+
+			@Override
+			public void onSelect( Item item ) {
+				if (item != null && canDismantle(item)) confirmDismantle(item);
+			}
+		});
+	}
+
+	private void confirmDismantle( final Item item ){
+		final int value = item.value();
+		GameScene.show(new WndOptions(new ItemSprite(item),
+				Messages.titleCase(item.name()),
+				Messages.get(Fabricator.class, "dismantle_confirm", item.name(), value),
+				Messages.get(Fabricator.class, "dismantle_yes"),
+				Messages.get(Fabricator.class, "dismantle_no")){
+			@Override
+			protected void onSelect( int index ) {
+				if (index == 0) dismantle(item, value);
+			}
+		});
+	}
+
+	private void dismantle( Item item, int value ){
+		String name = item.name();
+		WndTradeItem.sell(item);
+		Sample.INSTANCE.play( Assets.Sounds.EVOKE, 1f, 1.2f );
+		if (sprite != null) sprite.emitter().burst( EnergyParticle.FACTORY, 6 );
+		GLog.p( Messages.get(Fabricator.class, "dismantled", name, value) );
 	}
 
 	private void craft(){
