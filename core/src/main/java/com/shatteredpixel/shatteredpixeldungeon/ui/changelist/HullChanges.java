@@ -27,11 +27,14 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.changelist;
 
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.DM300Sprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FabricatorSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.KingSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GooSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.WandmakerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 
@@ -41,6 +44,14 @@ import java.util.ArrayList;
 public class HullChanges {
 
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
+		add( changeInfos, "v0.6.0", new ChangeButton[]{
+				new ChangeButton(new DM300Sprite(), msg("v060_caves_title"), msg("v060_caves")),
+				new ChangeButton(new KingSprite(), msg("v060_city_title"), msg("v060_city")),
+				new ChangeButton(new ItemSprite(ItemSpriteSheet.AMULET), msg("v060_halls_title"), msg("v060_halls")),
+				new ChangeButton(Icons.get(Icons.JOURNAL), msg("v060_logs_title"), msg("v060_logs")),
+				new ChangeButton(new WandmakerSprite(), msg("v060_art_title"), msg("v060_art")),
+				new ChangeButton(Icons.get(Icons.LANGS), msg("v060_english_title"), msg("v060_english")),
+		});
 		add( changeInfos, "v0.5.0", new ChangeButton[]{
 				new ChangeButton(Icons.get(Icons.STAIRS), msg("v050_story_title"), msg("v050_story")),
 				new ChangeButton(new ItemSprite(ItemSpriteSheet.WAND_MAGIC_MISSILE), msg("v050_items_title"), msg("v050_items")),
