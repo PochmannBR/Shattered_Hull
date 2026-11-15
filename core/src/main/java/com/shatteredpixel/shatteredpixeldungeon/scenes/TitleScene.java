@@ -77,6 +77,24 @@ public class TitleScene extends PixelScene {
 	private StyledButton btnSettings;
 	private StyledButton btnAbout;
 
+	//Shattered Hull: selo de apoiador, criado também logo depois da compra
+	private com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock selo;
+	private float seloX;
+
+	private void criarSelo(){
+		if (selo != null || !com.shatteredpixel.shatteredpixeldungeon.HullStore.apoiador()) return;
+		selo = PixelScene.renderTextBlock(Messages.get(TitleScene.class, "apoiador"), 6);
+		selo.hardlight(0xFFD84A);
+		selo.setPos(seloX, version.y - 1);
+		add(selo);
+	}
+
+	@Override
+	public void update() {
+		super.update();
+		criarSelo();
+	}
+
 	private BitmapText version;
 	private IconButton btnFade;
 	private ExitButton btnExit;
@@ -171,9 +189,9 @@ public class TitleScene extends PixelScene {
 		btnPlay.icon(Icons.get(Icons.ENTER));
 		add(btnPlay);
 
-		btnSupport = new SupportButton(GREY_TR, Messages.get(this, "support"));
-		//Shattered Hull: botão de apoio desligado até haver um canal próprio (a Google Play remove apps que citam o Patreon)
-		//add(btnSupport);
+		//Shattered Hull: o botão de apoio abre a loja do jogo
+		btnSupport = new SupportButton(GREY_TR, Messages.get(this, "loja"));
+		add(btnSupport);
 
 		btnRankings = new StyledButton(GREY_TR,Messages.get(this, "rankings")){
 			@Override
@@ -223,10 +241,10 @@ public class TitleScene extends PixelScene {
 		float buttonAreaWidth = landscape() ? PixelScene.MIN_WIDTH_L-6 : PixelScene.MIN_WIDTH_P-2;
 		float btnAreaLeft = insets.left + (w - buttonAreaWidth) / 2f;
 		if (landscape()) {
-			//Shattered Hull: sem os botões de apoio e de notícias, Jogar ocupa a linha inteira
-			btnPlay.setRect(btnAreaLeft, insets.top + topRegion+GAP, buttonAreaWidth, BTN_HEIGHT);
+			//Shattered Hull: Jogar e Loja dividem a primeira linha; sem notícias
+			btnPlay.setRect(btnAreaLeft, insets.top + topRegion+GAP, (buttonAreaWidth/2)-1, BTN_HEIGHT);
 			align(btnPlay);
-			btnSupport.setRect(btnPlay.left(), btnPlay.top(), 0, 0);
+			btnSupport.setRect(btnPlay.right()+2, btnPlay.top(), btnPlay.width(), BTN_HEIGHT);
 			btnNews.setRect(btnPlay.left(), btnPlay.top(), 0, 0);
 			btnRankings.setRect(btnPlay.left(), btnPlay.bottom()+ GAP, (buttonAreaWidth/2)-1, BTN_HEIGHT);
 			btnJournal.setRect(btnRankings.right()+2, btnRankings.top(), btnRankings.width(), BTN_HEIGHT);
@@ -234,16 +252,16 @@ public class TitleScene extends PixelScene {
 			btnChanges.setRect(btnSettings.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
 			btnAbout.setRect(btnChanges.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
 		} else {
-			btnPlay.setRect(btnAreaLeft, insets.top + topRegion+GAP, buttonAreaWidth, BTN_HEIGHT);
+			btnPlay.setRect(btnAreaLeft, insets.top + topRegion+GAP, (buttonAreaWidth/2)-1, BTN_HEIGHT);
 			align(btnPlay);
-			//Shattered Hull: sem os botões de apoio e de notícias, as linhas sobem
-			btnSupport.setRect(btnPlay.left(), btnPlay.top(), 0, 0);
+			//Shattered Hull: Jogar e Loja dividem a primeira linha; sem notícias
+			btnSupport.setRect(btnPlay.right()+2, btnPlay.top(), btnPlay.width(), BTN_HEIGHT);
 			btnNews.setRect(btnPlay.left(), btnPlay.top(), 0, 0);
-			btnRankings.setRect(btnPlay.left(), btnPlay.bottom()+ GAP, (btnPlay.width()/2)-1, BTN_HEIGHT);
+			btnRankings.setRect(btnPlay.left(), btnPlay.bottom()+ GAP, btnPlay.width(), BTN_HEIGHT);
 			btnJournal.setRect(btnRankings.right()+2, btnRankings.top(), btnRankings.width(), BTN_HEIGHT);
 			btnSettings.setRect(btnRankings.left(), btnRankings.bottom()+ GAP, btnRankings.width(), BTN_HEIGHT);
 			btnChanges.setRect(btnSettings.right()+2, btnSettings.top(), btnSettings.width(), BTN_HEIGHT);
-			btnAbout.setRect(btnSettings.left(), btnSettings.bottom()+GAP, btnPlay.width(), BTN_HEIGHT);
+			btnAbout.setRect(btnSettings.left(), btnSettings.bottom()+GAP, buttonAreaWidth, BTN_HEIGHT);
 		}
 
 		version = new BitmapText( "v" + Game.version, pixelFont);
@@ -252,6 +270,10 @@ public class TitleScene extends PixelScene {
 		version.x = insets.left + w - version.width() - (DeviceCompat.isDesktop() ? 4 : 8);
 		version.y = insets.top + h - version.height() - (DeviceCompat.isDesktop() ? 2 : 4);
 		add( version );
+
+		//Shattered Hull: selo de quem comprou o título de apoiador
+		seloX = insets.left + (DeviceCompat.isDesktop() ? 4 : 8);
+		criarSelo();
 
 		btnFade = new IconButton(Icons.CHEVRON.get()){
 			@Override
@@ -489,7 +511,7 @@ public class TitleScene extends PixelScene {
 
 		@Override
 		protected void onClick() {
-			ShatteredPixelDungeon.switchNoFade(SupporterScene.class);
+			ShatteredPixelDungeon.scene().addToFront(new com.shatteredpixel.shatteredpixeldungeon.windows.WndLoja());
 		}
 	}
 }

@@ -596,6 +596,14 @@ public abstract class Level implements Bundlable {
 			return false;
 		}
 
+		//Shattered Hull: a classe em teste para no fim do setor 5 até ser comprada
+		if ((transition.type == LevelTransition.Type.REGULAR_EXIT || transition.type == LevelTransition.Type.BRANCH_EXIT)
+				&& com.shatteredpixel.shatteredpixeldungeon.HullStore.testeEsgotado(hero.heroClass, transition.destDepth)){
+			com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene.show(
+					new com.shatteredpixel.shatteredpixeldungeon.windows.WndFimDoTeste(transition));
+			return false;
+		}
+
 		beforeTransition();
 		InterlevelScene.curTransition = transition;
 		if (transition.type == LevelTransition.Type.REGULAR_EXIT

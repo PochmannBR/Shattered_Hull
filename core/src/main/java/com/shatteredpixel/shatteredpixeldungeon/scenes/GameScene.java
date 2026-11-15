@@ -127,6 +127,8 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndContinue;
 import com.shatteredpixel.shatteredpixeldungeon.HullContinue;
+import com.shatteredpixel.shatteredpixeldungeon.HullStore;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndFimDoTeste;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUpgrade;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Blending;
@@ -796,6 +798,11 @@ public class GameScene extends PixelScene {
 			} else {
 				gameOver();
 			}
+		}
+
+		//Shattered Hull: classe em teste que chegou além do setor 5 por outro caminho
+		if (Dungeon.hero.isAlive() && HullStore.testeEsgotado(Dungeon.hero.heroClass, Dungeon.depth)){
+			add(new WndFimDoTeste(null));
 		}
 
 	}
