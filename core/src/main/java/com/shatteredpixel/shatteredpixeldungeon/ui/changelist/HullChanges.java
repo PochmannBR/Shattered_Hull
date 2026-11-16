@@ -27,9 +27,11 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.changelist;
 
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.BeeSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.DM300Sprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FabricatorSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.KingSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.MonkSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
@@ -44,6 +46,13 @@ import java.util.ArrayList;
 public class HullChanges {
 
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
+		add( changeInfos, "v0.7.0", new ChangeButton[]{
+				new ChangeButton(new MonkSprite(), msg("v070_art_title"), msg("v070_art")),
+				new ChangeButton(new BeeSprite(), msg("v070_names_title"), msg("v070_names")),
+				new ChangeButton(Icons.get(Icons.GOLD), msg("v070_store_title"), msg("v070_store")),
+				new ChangeButton(Icons.get(Icons.WARNING), msg("v070_continue_title"), msg("v070_continue")),
+				new ChangeButton(Icons.get(Icons.PREFS), msg("v070_balance_title"), msg("v070_balance")),
+		});
 		add( changeInfos, "v0.6.0", new ChangeButton[]{
 				new ChangeButton(new DM300Sprite(), msg("v060_caves_title"), msg("v060_caves")),
 				new ChangeButton(new KingSprite(), msg("v060_city_title"), msg("v060_city")),
