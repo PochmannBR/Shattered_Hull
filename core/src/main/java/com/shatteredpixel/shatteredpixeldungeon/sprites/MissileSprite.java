@@ -103,6 +103,7 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		
 		ANGULAR_SPEEDS.put(SpiritBow.SpiritArrow.class,       0);
 		ANGULAR_SPEEDS.put(ServiceRifle.Bullet.class,         0);
+		ANGULAR_SPEEDS.put(com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol.Bullet.class, 0);
 		ANGULAR_SPEEDS.put(ScorpioSprite.ScorpioShot.class,   0);
 		ANGULAR_SPEEDS.put(HolyLance.HolyLanceVFX.class,      0);
 		
@@ -168,7 +169,8 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 				|| Dungeon.hero.belongings.secondWep() instanceof Crossbow)){
 			speed *= 3f;
 			
-		} else if (item instanceof ServiceRifle.Bullet){
+		} else if (item instanceof ServiceRifle.Bullet
+				|| item instanceof com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol.Bullet){
 			speed *= 3f;
 
 		} else if (item instanceof SpiritBow.SpiritArrow

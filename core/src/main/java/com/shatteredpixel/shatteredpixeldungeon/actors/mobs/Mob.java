@@ -1184,6 +1184,15 @@ public abstract class Mob extends Char {
 		target = cell;
 	}
 	
+	//Shattered Hull: o inimigo ouve um disparo e vai até o lugar do barulho
+	public void ouvirRuido( int cell ) {
+		if (sprite != null) notice();
+		if (state != HUNTING && state != FLEEING) {
+			state = WANDERING;
+		}
+		target = cell;
+	}
+
 	public String description() {
 		return Messages.get(this, "desc");
 	}

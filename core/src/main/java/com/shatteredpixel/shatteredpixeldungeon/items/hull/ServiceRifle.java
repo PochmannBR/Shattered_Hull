@@ -273,6 +273,9 @@ public class ServiceRifle extends MeleeWeapon {
 		public void cast( final Hero user, final int dst ) {
 			rounds = Math.max(0, rounds - 1);
 			updateQuickslot();
+			//Shattered Hull 0.8: o disparo do fuzil faz barulho e atrai os inimigos próximos
+			com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ReconData.ruido(user.pos,
+					com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ReconData.RAIO_RUIDO_FUZIL);
 			super.cast(user, dst);
 		}
 	}

@@ -147,6 +147,8 @@ public enum Talent {
 	FEAR_THE_REAPER(84, 4), DEATHLY_DURABILITY(85, 4), DOUBLE_MARK(86, 4),
 	//Shadow Clone T4
 	SHADOW_BLADE(87, 4), CLONED_ARMOR(88, 4), PERFECT_COPY(89, 4),
+	//Shattered Hull: talentos das Forças especiais (T1, T2, T3)
+	DEEP_RECON(90), VANISH_IN_CHAOS(91), SILENT_HEADSHOT(92, 3),
 
 	//Huntress T1
 	NATURES_BOUNTY(96), SURVIVALISTS_INTUITION(97), FOLLOWUP_STRIKE(98), NATURES_AID(99),
@@ -994,7 +996,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, EMPOWERING_MEAL, SCHOLARS_INTUITION, LINGERING_MAGIC, BACKUP_BARRIER);
 				break;
 			case ROGUE:
-				Collections.addAll(tierTalents, CACHED_RATIONS, THIEFS_INTUITION, SUCKER_PUNCH, PROTECTIVE_SHADOWS);
+				Collections.addAll(tierTalents, CACHED_RATIONS, THIEFS_INTUITION, SUCKER_PUNCH, PROTECTIVE_SHADOWS, DEEP_RECON);
 				break;
 			case HUNTRESS:
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
@@ -1023,7 +1025,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, ENERGIZING_MEAL, INSCRIBED_POWER, WAND_PRESERVATION, ARCANE_VISION, SHIELD_BATTERY);
 				break;
 			case ROGUE:
-				Collections.addAll(tierTalents, MYSTICAL_MEAL, INSCRIBED_STEALTH, WIDE_SEARCH, SILENT_STEPS, ROGUES_FORESIGHT);
+				Collections.addAll(tierTalents, MYSTICAL_MEAL, INSCRIBED_STEALTH, WIDE_SEARCH, SILENT_STEPS, ROGUES_FORESIGHT, VANISH_IN_CHAOS);
 				break;
 			case HUNTRESS:
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, LIQUID_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
@@ -1052,7 +1054,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, DESPERATE_POWER, ALLY_WARP);
 				break;
 			case ROGUE:
-				Collections.addAll(tierTalents, ENHANCED_RINGS, LIGHT_CLOAK);
+				Collections.addAll(tierTalents, ENHANCED_RINGS, LIGHT_CLOAK, SILENT_HEADSHOT);
 				break;
 			case HUNTRESS:
 				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
