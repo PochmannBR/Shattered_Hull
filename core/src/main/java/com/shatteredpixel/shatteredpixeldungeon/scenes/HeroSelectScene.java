@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.HullStore;
+import com.shatteredpixel.shatteredpixeldungeon.HullTesteChefes;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndLoja;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
@@ -178,6 +179,12 @@ public class HeroSelectScene extends PixelScene {
 							}
 						}
 					});
+					return;
+				}
+
+				//Shattered Hull: nas builds de teste dá para começar direto num chefe
+				if (HullTesteChefes.disponivel()){
+					escolherTesteChefe();
 					return;
 				}
 
@@ -1030,6 +1037,26 @@ public class HeroSelectScene extends PixelScene {
 
 
 	//Shattered Hull: começa uma missão nova com a classe escolhida
+	private static void escolherTesteChefe(){
+		String[] opcoes = new String[HullTesteChefes.SETORES.length + 1];
+		opcoes[0] = Messages.get(HeroSelectScene.class, "teste_chefes_normal");
+		for (int i = 0; i < HullTesteChefes.SETORES.length; i++){
+			int setor = HullTesteChefes.SETORES[i];
+			opcoes[i + 1] = Messages.get(HeroSelectScene.class, "teste_chefes_setor", setor,
+					Messages.titleCase(HullTesteChefes.chefe(setor).name()));
+		}
+		ShatteredPixelDungeon.scene().addToFront(new WndOptions(Icons.get(Icons.ENTER),
+				Messages.get(HeroSelectScene.class, "teste_chefes_title"),
+				Messages.get(HeroSelectScene.class, "teste_chefes_msg"),
+				opcoes){
+			@Override
+			protected void onSelect( int index ) {
+				HullTesteChefes.pendente = index == 0 ? 0 : HullTesteChefes.SETORES[index - 1];
+				iniciarMissao();
+			}
+		});
+	}
+
 	private static void iniciarMissao(){
 		Dungeon.hero = null;
 		Dungeon.daily = Dungeon.dailyReplay = false;
