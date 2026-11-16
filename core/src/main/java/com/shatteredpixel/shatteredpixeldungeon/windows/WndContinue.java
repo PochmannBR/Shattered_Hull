@@ -27,6 +27,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.HullContinue;
+import com.shatteredpixel.shatteredpixeldungeon.HullStore;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -41,7 +42,9 @@ public class WndContinue extends WndOptions {
 		super( Icons.WARNING.get(),
 				Messages.get(WndContinue.class, "title"),
 				Messages.get(WndContinue.class, "message", Dungeon.depth),
-				Messages.get(WndContinue.class, "use"),
+				HullStore.instance.preco(HullStore.Produto.CONTINUE) != null
+						? Messages.get(WndContinue.class, "use_preco", HullStore.instance.preco(HullStore.Produto.CONTINUE))
+						: Messages.get(WndContinue.class, "use"),
 				Messages.get(WndContinue.class, "give_up") );
 		this.cause = cause == null ? new HullContinue.UnknownCause() : cause;
 		WndResurrect.instance = this;

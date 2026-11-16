@@ -31,20 +31,21 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 
 //Shattered Hull: curva de dificuldade por setor.
 //Multiplica a vida máxima e o dano corpo a corpo dos inimigos.
-//Dentro de cada região a subida é suave; depois de cada chefe há um degrau.
-//Os números partem da proposta do documento de design e precisam ser
-//confirmados com dados de partidas reais (meta: 15 a 20% terminam sem continue).
+//Na 0.7 a curva foi achatada a partir do simulador de balanceamento (testes/Balanco.java):
+//o fuzil dá muita vantagem no começo e perde peso no fim, então a curva sobe no
+//começo e fica perto de 1,00 nas últimas regiões. Os próprios inimigos já ficam
+//mais fortes a cada região. Meta: 15 a 20% das missões terminam sem continue.
 public class HullBalance {
 
 	//índice = setor; setores 5, 10, 15, 20 e 25 são de chefe
 	private static final float[] CURVE = {
 			1.00f,                                  //0 (não usado)
-			0.85f, 0.88f, 0.91f, 0.94f, 0.97f,      //1-5   destroços da nave
-			1.02f, 1.03f, 1.04f, 1.05f, 1.06f,      //6-10  planícies de cinza
-			1.10f, 1.11f, 1.12f, 1.13f, 1.14f,      //11-15 cavernas profundas
-			1.18f, 1.19f, 1.20f, 1.21f, 1.22f,      //16-20 colmeia exterior
-			1.26f, 1.27f, 1.28f, 1.29f, 1.30f,      //21-25 câmara da rainha
-			1.30f                                   //26
+			0.95f, 0.98f, 1.01f, 1.04f, 1.06f,      //1-5   destroços da nave
+			1.06f, 1.07f, 1.08f, 1.09f, 1.10f,      //6-10  planícies de cinza
+			1.02f, 1.03f, 1.04f, 1.05f, 1.06f,      //11-15 cavernas profundas
+			1.00f, 1.01f, 1.02f, 1.03f, 1.04f,      //16-20 colmeia exterior
+			0.99f, 1.00f, 1.01f, 1.02f, 1.03f,      //21-25 câmara da rainha
+			1.03f                                   //26
 	};
 
 	public static float depthModifier( int depth ){

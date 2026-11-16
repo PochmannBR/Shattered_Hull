@@ -331,9 +331,9 @@ public enum HeroClass {
 	}
 	
 	public boolean isUnlocked(){
-		//Shattered Hull: só o Fuzileiro está pronto. As outras classes aparecem
-		//na seleção apenas com retrato e descrição, mesmo em builds de debug.
-		return this == WARRIOR;
+		//Shattered Hull: a classe precisa estar pronta. Comprada ou não, ela pode
+		//ser jogada; sem a compra, a missão vai só até o fim do teste.
+		return com.shatteredpixel.shatteredpixeldungeon.HullStore.podeJogar(this);
 	}
 
 	public String lockedInfo() {

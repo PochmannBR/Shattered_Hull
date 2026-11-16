@@ -17,13 +17,13 @@ allprojects {
         //Full releases gets +2 on version code, needed for an F-Droid quirk
         //Shattered Hull: mantemos o código de versão do Shattered Pixel Dungeon 4.0.2 como ponto de partida,
         //como recomenda docs/recommended-changes.md, porque o jogo tem código de compatibilidade ligado a ele.
-        appVersionCode = 924
-        appVersionName = '0.6.0'
+        appVersionCode = 925
+        appVersionName = '0.7.0'
 
         appJavaCompatibility = JavaVersion.VERSION_11
 
         appAndroidCompileSDK = 36   //Android 15
-        appAndroidMinSDK = 21       //Android 5.0
+        appAndroidMinSDK = 23       //Android 6.0 (Shattered Hull: exigido pela Google Play Billing Library 8)
         appAndroidTargetSDK = 36    //Android 15
 
         gdxVersion = '1.14.0'

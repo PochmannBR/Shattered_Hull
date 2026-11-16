@@ -46,10 +46,18 @@ public class HullContinue {
 				&& !Dungeon.daily;
 	}
 
-	//Ponto de integração com a loja do Android/iOS. Por enquanto o continue
-	//é concedido direto, para testar o fluxo. Quando a compra existir, chamar
-	//listener.onResult(true) só depois da confirmação do pagamento.
-	public static void requestPurchase( Listener listener ){
-		listener.onResult( true );
+	//A compra passa pela loja da plataforma. O continue só é concedido
+	//depois da confirmação do pagamento.
+	public static void requestPurchase( final Listener listener ){
+		if (HullStore.usarCreditoContinue()){
+			listener.onResult(true);
+			return;
+		}
+		HullStore.instance.comprar(HullStore.Produto.CONTINUE, new HullStore.Callback1() {
+			@Override
+			public void resultado( HullStore.Resultado r ) {
+				listener.onResult(r == HullStore.Resultado.COMPRADO);
+			}
+		});
 	}
 }

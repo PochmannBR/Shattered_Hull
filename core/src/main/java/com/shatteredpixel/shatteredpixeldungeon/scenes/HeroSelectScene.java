@@ -25,6 +25,8 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.HullStore;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndLoja;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
@@ -158,13 +160,28 @@ public class HeroSelectScene extends PixelScene {
 					return;
 				}
 
-				Dungeon.hero = null;
-				Dungeon.daily = Dungeon.dailyReplay = false;
-				Dungeon.initSeed();
-				ActionIndicator.clearAction();
-				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+				//Shattered Hull: classe pronta mas não comprada começa em teste
+				final HeroClass cl = GamesInProgress.selectedClass;
+				if (HullStore.emTeste(cl)){
+					ShatteredPixelDungeon.scene().addToFront(new WndOptions(Icons.GOLD.get(),
+							Messages.get(HeroSelectScene.class, "teste_title"),
+							Messages.get(HeroSelectScene.class, "teste_msg", Messages.titleCase(cl.title()), HullStore.TESTE_ATE_SETOR),
+							Messages.get(HeroSelectScene.class, "teste_comecar"),
+							Messages.get(HeroSelectScene.class, "teste_comprar_classe", precoOuVazio(HullStore.Produto.daClasse(cl))),
+							Messages.get(HeroSelectScene.class, "teste_comprar_pacote", precoOuVazio(HullStore.Produto.PACOTE_CLASSES))){
+						@Override
+						protected void onSelect( int index ) {
+							if (index == 0){
+								iniciarMissao();
+							} else {
+								WndLoja.comprar(index == 1 ? HullStore.Produto.daClasse(cl) : HullStore.Produto.PACOTE_CLASSES, null);
+							}
+						}
+					});
+					return;
+				}
 
-				Game.switchScene( InterlevelScene.class );
+				iniciarMissao();
 			}
 		};
 		startBtn.icon(Icons.get(Icons.ENTER));
@@ -1011,4 +1028,19 @@ public class HeroSelectScene extends PixelScene {
 		}
 	}
 
+
+	//Shattered Hull: começa uma missão nova com a classe escolhida
+	private static void iniciarMissao(){
+		Dungeon.hero = null;
+		Dungeon.daily = Dungeon.dailyReplay = false;
+		Dungeon.initSeed();
+		ActionIndicator.clearAction();
+		InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+		Game.switchScene( InterlevelScene.class );
+	}
+
+	private static String precoOuVazio( HullStore.Produto p ){
+		String preco = HullStore.instance.preco(p);
+		return preco == null ? "" : preco;
+	}
 }
