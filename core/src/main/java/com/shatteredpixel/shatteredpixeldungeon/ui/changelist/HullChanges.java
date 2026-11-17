@@ -46,6 +46,14 @@ import java.util.ArrayList;
 public class HullChanges {
 
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
+		add( changeInfos, "v0.8.1", new ChangeButton[]{
+				new ChangeButton(Icons.get(Icons.ALCHEMY), msg("v081_names_title"), msg("v081_names")),
+				new ChangeButton(new ItemSprite(ItemSpriteSheet.CURSE_INFUSE), msg("v081_corrupt_title"), msg("v081_corrupt")),
+				new ChangeButton(new ItemSprite(ItemSpriteSheet.SUPPRESSED_PISTOL), msg("v081_recon_title"), msg("v081_recon")),
+				new ChangeButton(new DM300Sprite(), msg("v081_caves_title"), msg("v081_caves")),
+				new ChangeButton(new FabricatorSprite(), msg("v081_fab_title"), msg("v081_fab")),
+		});
+
 		add( changeInfos, "v0.8.0", new ChangeButton[]{
 				new ChangeButton(Icons.get(com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass.ROGUE), msg("v080_class_title"), msg("v080_class")),
 				new ChangeButton(new ItemSprite(ItemSpriteSheet.SUPPRESSED_PISTOL), msg("v080_stealth_title"), msg("v080_stealth")),
