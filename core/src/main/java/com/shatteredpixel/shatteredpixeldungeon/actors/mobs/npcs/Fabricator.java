@@ -103,7 +103,7 @@ public class Fabricator extends NPC {
 
 	@Override
 	public Notes.Landmark landmark() {
-		return Notes.Landmark.SHOP;
+		return Notes.Landmark.FABRICATOR;
 	}
 
 	@Override

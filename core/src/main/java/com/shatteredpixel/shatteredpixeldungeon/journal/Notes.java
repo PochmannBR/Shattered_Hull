@@ -139,7 +139,10 @@ public class Notes {
 		TROLL,
 		IMP,
 
-		DEMON_SPAWNER;
+		DEMON_SPAWNER,
+
+		//Shattered Hull: os fabricadores têm marco próprio, antes registrados como loja
+		FABRICATOR;
 	}
 	
 	public static class LandmarkRecord extends Record {
@@ -209,6 +212,9 @@ public class Notes {
 
 				case DEMON_SPAWNER:
 					return new Image(new SpawnerSprite());
+
+				case FABRICATOR:
+					return new Image(new com.shatteredpixel.shatteredpixeldungeon.sprites.FabricatorSprite());
 			}
 		}
 
@@ -255,6 +261,8 @@ public class Notes {
 
 				case LOST_PACK:         return Messages.get(LostBackpack.class, "desc");
 				case BEACON_LOCATION:   return Messages.get(BeaconOfReturning.class, "desc");
+
+				case FABRICATOR:        return Messages.get(com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Fabricator.class, "desc");
 
 				case GHOST:         return Messages.get(Ghost.class, "desc");
 				case RAT_KING:      return new RatKing().description(); //variable description based on holiday/run state

@@ -48,11 +48,11 @@ public class ReconData extends Buff {
 		return true;
 	}
 
-	public static final int RAIO_BASE = 5;
+	public static final int RAIO_BASE = 3;
 	public static final int RAIO_RUIDO_FUZIL = 6;
 
 	public static int raio( Hero hero ){
-		return RAIO_BASE + 2 * hero.pointsInTalent(Talent.DEEP_RECON);
+		return RAIO_BASE + hero.pointsInTalent(Talent.DEEP_RECON);
 	}
 
 	//chamado pelo Char.attack quando o herói mata um inimigo que não o tinha visto
