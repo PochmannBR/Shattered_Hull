@@ -387,6 +387,10 @@ public abstract class Char extends Actor {
 			return false;
 
 		} else if (hit( this, enemy, accMulti, false )) {
+
+			//Shattered Hull: o inimigo ainda não tinha visto o herói (abate furtivo das Forças especiais)
+			boolean hullSurpresa = this == Dungeon.hero && enemy instanceof com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob
+					&& ((com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob) enemy).surprisedBy(this, false);
 			
 			int dr = Math.round(enemy.drRoll() * AscensionChallenge.statModifier(enemy));
 			
@@ -559,6 +563,10 @@ public abstract class Char extends Actor {
 			if (enemy.sprite != null) {
 				enemy.sprite.bloodBurstA(sprite.center(), effectiveDamage);
 				enemy.sprite.flash();
+			}
+
+			if (hullSurpresa && !enemy.isAlive()) {
+				com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ReconData.abateFurtivo(Dungeon.hero, enemy);
 			}
 
 			if (!enemy.isAlive() && visibleFight) {

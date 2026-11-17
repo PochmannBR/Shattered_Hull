@@ -148,7 +148,8 @@ public class Fabricator extends NPC {
 	private Item makeProduct(){
 		switch (type){
 			case AMMO: default:
-				if (Dungeon.hero.belongings.getItem(ServiceRifle.class) != null){
+				if (Dungeon.hero.belongings.getItem(ServiceRifle.class) != null
+						|| Dungeon.hero.belongings.getItem(com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol.class) != null){
 					return new Magazine();
 				}
 				return Generator.randomMissile();
@@ -166,7 +167,8 @@ public class Fabricator extends NPC {
 	private String productName(){
 		switch (type){
 			case AMMO: default:
-				if (Dungeon.hero.belongings.getItem(ServiceRifle.class) != null){
+				if (Dungeon.hero.belongings.getItem(ServiceRifle.class) != null
+						|| Dungeon.hero.belongings.getItem(com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol.class) != null){
 					return new Magazine().name();
 				}
 				return Messages.get(this, "product_missile");
@@ -226,6 +228,7 @@ public class Fabricator extends NPC {
 	//Funciona mesmo com o núcleo sem energia, porque reciclar não gasta carga.
 	public static boolean canDismantle( Item item ){
 		if (item instanceof ServiceRifle) return false;
+		if (item instanceof com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol) return false;
 		return Shopkeeper.canSell(item);
 	}
 

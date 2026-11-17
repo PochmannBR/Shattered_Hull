@@ -211,11 +211,13 @@ public enum HeroClass {
 		(hero.belongings.artifact = cloak).identify();
 		hero.belongings.artifact.activate( hero );
 
-		ThrowingKnife knives = new ThrowingKnife();
-		knives.identify().collect();
+		//Shattered Hull: pistola com supressor carregada e um carregador de reserva
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol pistol = new com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol();
+		pistol.identify().collect();
+		new Magazine().collect();
 
 		Dungeon.quickslot.setSlot(0, cloak);
-		Dungeon.quickslot.setSlot(1, knives);
+		Dungeon.quickslot.setSlot(1, pistol);
 
 		new ScrollOfMagicMapping().identify();
 		new PotionOfInvisibility().identify();
