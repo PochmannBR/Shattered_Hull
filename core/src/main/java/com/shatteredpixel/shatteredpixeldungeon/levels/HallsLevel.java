@@ -151,6 +151,9 @@ public class HallsLevel extends RegularLevel {
 	@Override
 	public String tileName( int tile ) {
 		switch (tile) {
+			//Shattered Hull: a estante de cada região tem nome próprio
+			case Terrain.BOOKSHELF:
+				return Messages.get(HallsLevel.class, "bookshelf_name");
 			case Terrain.WATER:
 				return Messages.get(HallsLevel.class, "water_name");
 			case Terrain.GRASS:

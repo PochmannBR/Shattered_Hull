@@ -46,6 +46,12 @@ import java.util.ArrayList;
 public class HullChanges {
 
 	public static void addAllChanges( ArrayList<ChangeInfo> changeInfos ){
+		add( changeInfos, "v0.8.2", new ChangeButton[]{
+				new ChangeButton(new ItemSprite(ItemSpriteSheet.ANKH), msg("v082_texts_title"), msg("v082_texts")),
+				new ChangeButton(Icons.get(Icons.DEPTH), msg("v082_terrain_title"), msg("v082_terrain")),
+				new ChangeButton(Icons.get(Icons.BADGES), msg("v082_badges_title"), msg("v082_badges")),
+				new ChangeButton(Icons.get(Icons.GOLD), msg("v082_support_title"), msg("v082_support")),
+		});
 		add( changeInfos, "v0.8.1", new ChangeButton[]{
 				new ChangeButton(Icons.get(Icons.ALCHEMY), msg("v081_names_title"), msg("v081_names")),
 				new ChangeButton(new ItemSprite(ItemSpriteSheet.CURSE_INFUSE), msg("v081_corrupt_title"), msg("v081_corrupt")),
