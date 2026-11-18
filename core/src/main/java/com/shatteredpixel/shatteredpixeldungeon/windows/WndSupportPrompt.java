@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Languages;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SupporterScene;
@@ -41,16 +40,13 @@ public class WndSupportPrompt extends Window {
 
 		int width = PixelScene.landscape() ? WIDTH_L : WIDTH_P;
 
-		IconTitle title = new IconTitle(Icons.get(Icons.SHPX), Messages.get(WndSupportPrompt.class, "title"));
+		IconTitle title = new IconTitle(Icons.get(Icons.GOLD), Messages.get(WndSupportPrompt.class, "title"));
 		title.setRect( 0, 0, width, 0 );
 		add(title);
 
 		String message = Messages.get(WndSupportPrompt.class, "intro");
-		message += "\n\n" + Messages.get(SupporterScene.class, "patreon_msg");
-		if (Messages.lang() != Languages.ENGLISH) {
-			message += "\n" + Messages.get(SupporterScene.class, "patreon_english");
-		}
-		message += "\n- Evan";
+		message += "\n\n" + Messages.get(SupporterScene.class, "apoio_msg");
+		message += "\n- Pablo Pochmann";
 
 		RenderedTextBlock text = PixelScene.renderTextBlock( 6 );
 		text.text( message, width );
@@ -61,14 +57,10 @@ public class WndSupportPrompt extends Window {
 			@Override
 			protected void onClick() {
 				super.onClick();
-				String link = "https://www.patreon.com/ShatteredPixel";
-				//tracking codes, so that the website knows where this pageview came from
-				link += "?utm_source=shatteredpd";
-				link += "&utm_medium=supporter_prompt";
-				link += "&utm_campaign=ingame_link";
-				ShatteredPixelDungeon.platform.openURI(link);
+				//Shattered Hull: o apoio é pela loja do jogo
 				SPDSettings.supportNagged(true);
 				WndSupportPrompt.super.hide();
+				ShatteredPixelDungeon.scene().addToFront(new WndLoja());
 			}
 		};
 		link.setRect(0, text.bottom() + 4, width, 18);
