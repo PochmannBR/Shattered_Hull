@@ -176,6 +176,9 @@ public class PrisonLevel extends RegularLevel {
 	@Override
 	public String tileName( int tile ) {
 		switch (tile) {
+			//Shattered Hull: a estante de cada região tem nome próprio
+			case Terrain.BOOKSHELF:
+				return Messages.get(PrisonLevel.class, "bookshelf_name");
 			case Terrain.WATER:
 				return Messages.get(PrisonLevel.class, "water_name");
 			case Terrain.REGION_DECO:
