@@ -40,7 +40,7 @@ public class AmostraItem extends Item {
 	public static final String AC_INSTALAR = "INSTALAR";
 
 	{
-		image = ItemSpriteSheet.SEED_SUNGRASS;
+		image = ItemSpriteSheet.AMOSTRA;
 		defaultAction = AC_INSTALAR;
 		unique = false;
 	}

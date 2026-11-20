@@ -238,6 +238,16 @@ public abstract class ClericSpell {
 		spells.add(BeamingRay.INSTANCE);
 		spells.add(LifeLinkSpell.INSTANCE);
 		spells.add(Stasis.INSTANCE);
+		//Shattered Hull: habilidades do Sintético, para o atalho rápido voltar ao carregar a missão
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.DesligarArmadilha.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.AbrirFechadura.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.Autorreparo.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.RevelarArea.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.TrancarPorta.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.BarreiraTemporaria.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.ReligarTerminal.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.ChamarDrone.INSTANCE);
+		spells.add(com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.InvadirMaquina.INSTANCE);
 		return spells;
 	}
 }

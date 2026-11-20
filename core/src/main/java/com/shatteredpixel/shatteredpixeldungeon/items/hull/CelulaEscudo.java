@@ -45,7 +45,7 @@ public class CelulaEscudo extends Item {
 	public static final String AC_ATIVAR = "ATIVAR";
 
 	{
-		image = ItemSpriteSheet.STONE_BLINK;
+		image = ItemSpriteSheet.CELULA_ESCUDO;
 		defaultAction = AC_ATIVAR;
 	}
 

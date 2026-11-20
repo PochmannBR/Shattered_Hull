@@ -210,6 +210,12 @@ public enum Document {
 					return new ItemSprite( ItemSpriteSheet.SPIRIT_BOW );
 				case "Magic":
 					return new ItemSprite( ItemSpriteSheet.WAND_FIREBOLT );
+				case GUIDE_SUPRIMENTO:
+					return new ItemSprite( ItemSpriteSheet.MAGES_STAFF );
+				case GUIDE_SINTETICO:
+					return new ItemSprite( ItemSpriteSheet.ARTIFACT_TOME );
+				case GUIDE_ASSIMILACAO:
+					return new ItemSprite( ItemSpriteSheet.AMOSTRA );
 			}
 		}
 	}
@@ -252,6 +258,10 @@ public enum Document {
 	public static final String GUIDE_DIEING         = "Dieing";
 
 	public static final String GUIDE_SEARCHING      = "Searching";
+	//Shattered Hull: páginas das classes novas, entregues no começo da missão de cada uma
+	public static final String GUIDE_SUPRIMENTO     = "Suprimento";
+	public static final String GUIDE_SINTETICO      = "Sintetico";
+	public static final String GUIDE_ASSIMILACAO    = "Assimilacao";
 
 	public static final String KING_ATTRITION       = "attrition";
 
@@ -274,6 +284,9 @@ public enum Document {
 		ADVENTURERS_GUIDE.pagesStates.put("Levelling",          debug ? READ : NOT_FOUND);
 		ADVENTURERS_GUIDE.pagesStates.put("Positioning",        debug ? READ : NOT_FOUND);
 		ADVENTURERS_GUIDE.pagesStates.put("Magic",              debug ? READ : NOT_FOUND);
+		ADVENTURERS_GUIDE.pagesStates.put(GUIDE_SUPRIMENTO,     debug ? READ : NOT_FOUND);
+		ADVENTURERS_GUIDE.pagesStates.put(GUIDE_SINTETICO,      debug ? READ : NOT_FOUND);
+		ADVENTURERS_GUIDE.pagesStates.put(GUIDE_ASSIMILACAO,    debug ? READ : NOT_FOUND);
 		
 		//given in sewers
 		ALCHEMY_GUIDE.pagesStates.put("Potions",                debug ? READ : NOT_FOUND);

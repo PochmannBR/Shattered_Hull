@@ -223,7 +223,19 @@ public class Renegado {
 		if (h.buff(Gelatinoso.class) != null && dmg > 6){
 			dmg = 6 + (dmg - 6) / 2;
 		}
+		//ácido e esporos alimentam o tecido do enxame: o medidor sobe um pouco
+		if (m != null && acidoOuEsporo(src)){
+			m.subir(Math.min(3, 1 + dmg / 5));
+		}
 		return dmg;
+	}
+
+	public static boolean acidoOuEsporo(Object src){
+		return src instanceof Ooze
+				|| src instanceof com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corrosion
+				|| src instanceof com.shatteredpixel.shatteredpixeldungeon.actors.blobs.CorrosiveGas
+				|| src instanceof Elemental
+				|| src instanceof FungalSentry || src instanceof FungalCore || src instanceof FungalSpinner;
 	}
 
 	public static boolean podeUsarItens(Hero h){
@@ -619,7 +631,7 @@ public class Renegado {
 				com.watabou.noosa.Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS),
+						GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.AMOSTRA),
 								Messages.get(Renegado.class, "cem_titulo"), Messages.get(Renegado.class, chave)));
 					}
 				});
@@ -645,7 +657,7 @@ public class Renegado {
 			com.watabou.noosa.Game.runOnRenderThread(new Callback() {
 				@Override
 				public void call() {
-			GameScene.show(new WndOptions(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS),
+			GameScene.show(new WndOptions(new ItemSprite(ItemSpriteSheet.AMOSTRA),
 					Messages.get(Renegado.class, "mutacao_titulo"), Messages.get(Renegado.class, "mutacao_escolha"),
 					opcoes){
 				@Override
@@ -771,7 +783,7 @@ public class Renegado {
 
 		@Override
 		public int actionIcon() {
-			return HeroIcon.CHALLENGE;
+			return HeroIcon.AMOSTRAS;
 		}
 
 		@Override
@@ -792,7 +804,7 @@ public class Renegado {
 				nomes.add(am.habilidade() + " (+" + custo(h, am) + ")");
 			}
 			nomes.add(Messages.get(Renegado.class, "ejetar"));
-			GameScene.show(new WndOptions(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS),
+			GameScene.show(new WndOptions(new ItemSprite(ItemSpriteSheet.AMOSTRA),
 					Messages.get(Renegado.class, "titulo"), Messages.get(Renegado.class, "lista", (int) valor),
 					nomes.toArray(new String[0])){
 				@Override

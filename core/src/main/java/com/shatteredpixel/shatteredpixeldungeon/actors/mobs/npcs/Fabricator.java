@@ -164,6 +164,13 @@ public class Fabricator extends NPC {
 				}
 				return Generator.randomMissile();
 			case MEDICAL:
+				//Shattered Hull: o Renegado recebe o injetor supressor, e o Sintético, biomassa para o kit de reparos
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.e(Dungeon.hero)){
+					return new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor();
+				}
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero)){
+					return new com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop().quantity(10);
+				}
 				return new PotionOfHealing();
 			case ARMORY:
 				Armor armor = Generator.randomArmor();
@@ -183,6 +190,12 @@ public class Fabricator extends NPC {
 				}
 				return Messages.get(this, "product_missile");
 			case MEDICAL:
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.e(Dungeon.hero)){
+					return new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor().name();
+				}
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero)){
+					return Messages.get(this, "product_biomassa");
+				}
 				return Messages.get(this, "product_medical");
 			case ARMORY:
 				return Messages.get(this, "product_armor");

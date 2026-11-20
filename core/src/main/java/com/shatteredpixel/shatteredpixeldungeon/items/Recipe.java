@@ -210,7 +210,8 @@ public abstract class Recipe {
 		new CurseInfusion.Recipe(),
 		new ReclaimTrap.Recipe(),
 		new WildEnergy.Recipe(),
-		new StewedMeat.twoMeat()
+		new StewedMeat.twoMeat(),
+		new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor.Receita()
 	};
 	
 	private static Recipe[] threeIngredientRecipes = new Recipe[]{

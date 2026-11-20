@@ -202,6 +202,7 @@ public enum HeroClass {
 
 		//Shattered Hull: o transmissor começa com as cargas de pedido cheias
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.cargas(hero);
+		com.shatteredpixel.shatteredpixeldungeon.journal.Document.ADVENTURERS_GUIDE.findPage(com.shatteredpixel.shatteredpixeldungeon.journal.Document.GUIDE_SUPRIMENTO);
 
 		new ScrollOfUpgrade().identify();
 		new PotionOfLiquidFlame().identify();
@@ -248,6 +249,7 @@ public enum HeroClass {
 		injetores.quantity(2).identify().collect();
 
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.medidor(hero).instalar(com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.Amostra.MANDIBULAS);
+		com.shatteredpixel.shatteredpixeldungeon.journal.Document.ADVENTURERS_GUIDE.findPage(com.shatteredpixel.shatteredpixeldungeon.journal.Document.GUIDE_ASSIMILACAO);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Dungeon.quickslot.setSlot(1, injetores);
@@ -272,6 +274,7 @@ public enum HeroClass {
 		macacao.identify();
 		hero.belongings.armor = macacao;
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.reserva(hero).encher();
+		com.shatteredpixel.shatteredpixeldungeon.journal.Document.ADVENTURERS_GUIDE.findPage(com.shatteredpixel.shatteredpixeldungeon.journal.Document.GUIDE_SINTETICO);
 
 		new PotionOfPurity().identify();
 		new ScrollOfRemoveCurse().identify();

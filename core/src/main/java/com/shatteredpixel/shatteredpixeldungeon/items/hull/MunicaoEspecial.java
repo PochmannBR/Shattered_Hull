@@ -105,16 +105,19 @@ public abstract class MunicaoEspecial extends Item {
 	public static final int FOGO = 0, GELO = 1, CHOQUE = 2;
 
 	public static class Incendiaria extends MunicaoEspecial {
+		{ image = ItemSpriteSheet.MUNICAO_INCENDIARIA; }
 		@Override public int efeito() { return FOGO; }
 		@Override public ItemSprite.Glowing glowing() { return new ItemSprite.Glowing(0xFF6600, 1f); }
 	}
 
 	public static class Criogenica extends MunicaoEspecial {
+		{ image = ItemSpriteSheet.MUNICAO_CRIOGENICA; }
 		@Override public int efeito() { return GELO; }
 		@Override public ItemSprite.Glowing glowing() { return new ItemSprite.Glowing(0x66CCFF, 1f); }
 	}
 
 	public static class Choque extends MunicaoEspecial {
+		{ image = ItemSpriteSheet.MUNICAO_CHOQUE; }
 		@Override public int efeito() { return CHOQUE; }
 		@Override public ItemSprite.Glowing glowing() { return new ItemSprite.Glowing(0xFFFF66, 1f); }
 	}

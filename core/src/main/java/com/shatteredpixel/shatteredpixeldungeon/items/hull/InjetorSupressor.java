@@ -40,7 +40,7 @@ public class InjetorSupressor extends Item {
 	public static final String AC_INJETAR = "INJETAR";
 
 	{
-		image = ItemSpriteSheet.HEALING_DART;
+		image = ItemSpriteSheet.INJETOR_SUPRESSOR;
 		defaultAction = AC_INJETAR;
 		stackable = true;
 	}
@@ -94,5 +94,17 @@ public class InjetorSupressor extends Item {
 	@Override
 	public int value() {
 		return 30 * quantity;
+	}
+
+	//bancada de síntese: injetor de cura e carne do enxame viram um injetor supressor
+	public static class Receita extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
+		{
+			inputs = new Class[]{com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing.class,
+					com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat.class};
+			inQuantity = new int[]{1, 1};
+			cost = 3;
+			output = InjetorSupressor.class;
+			outQuantity = 1;
+		}
 	}
 }
