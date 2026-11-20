@@ -627,6 +627,8 @@ public abstract class Char extends Actor {
 	}
 
 	public static boolean hit( Char attacker, Char defender, float accMulti, boolean magic ) {
+		//Shattered Hull: o enxame hesita em atacar o Renegado na faixa alta
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.hesita(attacker, defender)) return false;
 		float acuStat = attacker.attackSkill( defender );
 		float defStat = defender.defenseSkill( attacker );
 
@@ -1390,6 +1392,7 @@ public abstract class Char extends Actor {
 	public boolean isImmune(Class effect ){
 		//Shattered Hull: corpo de máquina do Sintético
 		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.imune(this, effect)) return true;
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.imune(this, effect)) return true;
 		HashSet<Class> immunes = new HashSet<>(immunities);
 		for (Property p : properties()){
 			immunes.addAll(p.immunities());

@@ -1012,7 +1012,7 @@ public abstract class Mob extends Char {
 					}
 				}
 
-				if (Dungeon.hero.subClass == HeroSubClass.MONK){
+				if (Dungeon.hero.subClass == HeroSubClass.MONK && Dungeon.hero.heroClass != HeroClass.DUELIST){
 					Buff.affect(Dungeon.hero, MonkEnergy.class).gainEnergy(this);
 				}
 			}
@@ -1028,7 +1028,8 @@ public abstract class Mob extends Char {
 			EXP /= 2;
 		}
 
-		//Shattered Hull: abates recarregam a reserva do Sintético
+		//Shattered Hull: abates recarregam a reserva do Sintético e podem soltar amostras para o Renegado
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.abate(this, cause);
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.abate(this, cause);
 
 		if (alignment == Alignment.ENEMY){

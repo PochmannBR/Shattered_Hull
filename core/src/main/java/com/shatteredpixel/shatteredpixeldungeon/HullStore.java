@@ -78,7 +78,7 @@ public abstract class HullStore {
 
 	//Classes com conteúdo pronto. Uma classe só pode ser comprada ou testada
 	//depois de entrar aqui; até lá ela aparece na loja como "em breve".
-	public static final EnumSet<HeroClass> CLASSES_PRONTAS = EnumSet.of(HeroClass.WARRIOR, HeroClass.ROGUE, HeroClass.MAGE, HeroClass.CLERIC);
+	public static final EnumSet<HeroClass> CLASSES_PRONTAS = EnumSet.of(HeroClass.WARRIOR, HeroClass.ROGUE, HeroClass.MAGE, HeroClass.CLERIC, HeroClass.DUELIST);
 
 	//O teste gratuito de uma classe vai até o fim deste setor.
 	public static final int TESTE_ATE_SETOR = 5;

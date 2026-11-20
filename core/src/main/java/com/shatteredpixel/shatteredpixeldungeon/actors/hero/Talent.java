@@ -208,6 +208,15 @@ public enum Talent {
 	BODY_FORM(180, 4), MIND_FORM(181, 4), SPIRIT_FORM(182, 4),
 	//Power of Many T4
 	BEAMING_RAY(183, 4), LIFE_LINK(184, 4), STASIS(185, 4),
+	//Shattered Hull: Renegado, com os ícones dos talentos da Duelista que ele substitui
+	COLETA_CUIDADOSA(128), METABOLISMO_ESTAVEL(129), ADAPTACAO_RAPIDA(130), SENTIDO_ENXAME(131),
+	INJECAO_EFICIENTE(132), USO_ECONOMICO(133), EJECAO_LIMPA(134), TECIDO_REGENERATIVO(135), FOME_ENXAME(136),
+	MUTACAO_ADAPTADA(137, 3), GOLPE_ASSIMILADOR(138, 3),
+	SURTO_PROLONGADO(139, 3), MUTACAO_PODEROSA(140, 3), FAIXA_ALTA(141, 3),
+	DOSE_DUPLA(142, 3), CALMA_COMBATE(143, 3), VIGILIA(144, 3),
+	DANO_ASSIMILADOR(145, 4), COLETA_FORCADA(146, 4), GOLPE_PURGADOR(147, 4),
+	FORMA_DURADOURA(148, 4), SALTO_CONTIDO(149, 4), REGENERACAO_ENXAME(150, 4),
+	RAIO_FEROMONIO(151, 4), FEROMONIO_DURADOURO(152, 4), EXAUSTAO(153, 4),
 	//Shattered Hull: Sintético, com os ícones dos talentos do Clérigo que ele substitui
 	EFICIENCIA_ENERGETICA(160), SENSORES_AMPLIADOS(161), REPARO_CAMPO(162), RECICLAGEM(163),
 	CHAVE_UNIVERSAL(164), DESARME_REMOTO(165), ISOLAMENTO(166), REDE_DRONES(167), TERMINAL_BOLSO(168),
@@ -608,6 +617,7 @@ public enum Talent {
 	public static void onFoodEaten( Hero hero, float foodVal, Item foodSource ){
 		//Shattered Hull: refeição de campanha do Exterminador
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.refeicao(hero);
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.comeu(hero, foodSource);
 		if (hero.hasTalent(HEARTY_MEAL)){
 			//4/6 HP healed, when hero is below 33% health (with a little rounding up)
 			if (hero.HP/(float)hero.HT < 0.334f) {
@@ -1021,7 +1031,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
 				break;
 			case DUELIST:
-				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
+				Collections.addAll(tierTalents, COLETA_CUIDADOSA, METABOLISMO_ESTAVEL, ADAPTACAO_RAPIDA, SENTIDO_ENXAME);
 				break;
 			case CLERIC:
 				Collections.addAll(tierTalents, EFICIENCIA_ENERGETICA, SENSORES_AMPLIADOS, REPARO_CAMPO, RECICLAGEM);
@@ -1050,7 +1060,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, LIQUID_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
 			case DUELIST:
-				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
+				Collections.addAll(tierTalents, INJECAO_EFICIENTE, USO_ECONOMICO, EJECAO_LIMPA, TECIDO_REGENERATIVO, FOME_ENXAME);
 				break;
 			case CLERIC:
 				Collections.addAll(tierTalents, CHAVE_UNIVERSAL, DESARME_REMOTO, ISOLAMENTO, REDE_DRONES, TERMINAL_BOLSO);
@@ -1079,7 +1089,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
 				break;
 			case DUELIST:
-				Collections.addAll(tierTalents, PRECISE_ASSAULT, DEADLY_FOLLOWUP);
+				Collections.addAll(tierTalents, MUTACAO_ADAPTADA, GOLPE_ASSIMILADOR);
 				break;
 			case CLERIC:
 				Collections.addAll(tierTalents, RESERVA_EXPANDIDA, INVASAO_PROLONGADA);
@@ -1137,10 +1147,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, DURABLE_TIPS, BARKSKIN, SHIELDING_DEW);
 				break;
 			case CHAMPION:
-				Collections.addAll(tierTalents, VARIED_CHARGE, TWIN_UPGRADES, COMBINED_LETHALITY);
+				Collections.addAll(tierTalents, SURTO_PROLONGADO, MUTACAO_PODEROSA, FAIXA_ALTA);
 				break;
 			case MONK:
-				Collections.addAll(tierTalents, UNENCUMBERED_SPIRIT, MONASTIC_VIGOR, COMBINED_ENERGY);
+				Collections.addAll(tierTalents, DOSE_DUPLA, CALMA_COMBATE, VIGILIA);
 				break;
 			case PRIEST:
 				Collections.addAll(tierTalents, INVASAO_REDE, DRONE_COMBATE, RETORNO_SINAL);

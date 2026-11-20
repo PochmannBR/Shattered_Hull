@@ -240,14 +240,17 @@ public enum HeroClass {
 
 	private static void initDuelist( Hero hero ) {
 
-		(hero.belongings.weapon = new Rapier()).identify();
+		//Shattered Hull: faca de abordagem, dois injetores supressores e a amostra de rastejador instalada
+		(hero.belongings.weapon = new com.shatteredpixel.shatteredpixeldungeon.items.hull.FacaAbordagem()).identify();
 		hero.belongings.weapon.activate(hero);
 
-		ThrowingSpike spikes = new ThrowingSpike();
-		spikes.quantity(2).identify().collect(); //set quantity is 3, but Duelist starts with 2
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor injetores = new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor();
+		injetores.quantity(2).identify().collect();
+
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.medidor(hero).instalar(com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.Amostra.MANDIBULAS);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
-		Dungeon.quickslot.setSlot(1, spikes);
+		Dungeon.quickslot.setSlot(1, injetores);
 
 		new PotionOfStrength().identify();
 		new ScrollOfMirrorImage().identify();
@@ -301,7 +304,7 @@ public enum HeroClass {
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case DUELIST:
-				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
+				return new ArmorAbility[]{new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.AssimilacaoForcada(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.FormaEnxameAbility(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.FeromonioComando()};
 			case CLERIC:
 				return new ArmorAbility[]{new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.PulsoEletromagnetico(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.SobrecargaNucleo(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.EnxameNanodrones()};
 		}

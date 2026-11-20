@@ -515,6 +515,8 @@ public class Hero extends Char {
 		KindOfWeapon wep = belongings.attackingWeapon();
 		
 		float accuracy = 1;
+		//Shattered Hull: precisão do Renegado
+		accuracy *= com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.fatorPrecisao(this);
 		accuracy *= RingOfAccuracy.accuracyMultiplier( this );
 		
 		//precise assault and liquid agility
@@ -724,6 +726,7 @@ public class Hero extends Char {
 		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.economia(this)) speed *= 0.67f;
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.Sobrecarga sobrecarga = buff(com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.Sobrecarga.class);
 		if (sobrecarga != null) speed *= sobrecarga.velocidade(this);
+		speed *= com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.fatorVelocidade(this);
 		
 		if (belongings.armor() != null) {
 			speed = belongings.armor().speedFactor(this, speed);
@@ -1532,6 +1535,12 @@ public class Hero extends Char {
 	public int attackProc( final Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
 
+		//Shattered Hull: faixas do medidor do Renegado e golpe assimilador
+		damage = Math.round(damage * com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.fatorDano(this));
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.e(this) && com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.enxame(enemy) && com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.valor(this) >= 50 && hasTalent(Talent.GOLPE_ASSIMILADOR)){
+			HP = Math.min(HT, HP + 1 + pointsInTalent(Talent.GOLPE_ASSIMILADOR));
+		}
+
 		//Shattered Hull: investida hidráulica do Couraçado
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.investida(this, enemy);
 
@@ -1648,6 +1657,7 @@ public class Hero extends Char {
 
 		//Shattered Hull: fraqueza elétrica e para-raios do Sintético
 		dmg = com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.danoRecebido(this, dmg, src);
+		dmg = com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.danoRecebido(this, dmg, src);
 
 		//regular damage interrupt, triggers on any damage except specific mild DOT effects
 		// unless the player recently hit 'continue moving', in which case this is ignored
@@ -2279,6 +2289,7 @@ public class Hero extends Char {
 	//Shattered Hull: volta no início do setor com metade da vida.
 	//Munição, remédios e itens ficam como estavam.
 	public void continueRevive() {
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.aoContinuar(this);
 		HP = Math.max(1, HT / 2);
 		PotionOfHealing.cure(this);
 		Buff.prolong(this, Invulnerability.class, 3f);
