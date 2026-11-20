@@ -359,10 +359,7 @@ public class MeleeWeapon extends Weapon {
 			}
 		}
 
-		//the mage's staff has no ability as it can only be gained by the mage
-		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST && !(this instanceof MagesStaff)){
-			info += "\n\n" + abilityInfo();
-		}
+		//Shattered Hull: o Renegado não usa as habilidades de arma da Duelista, então a descrição não as mostra
 		
 		return info;
 	}
