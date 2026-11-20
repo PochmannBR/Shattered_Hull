@@ -613,15 +613,21 @@ public class Renegado {
 			escolherMutacao(h);
 		}
 
-		private void aviso(String chave){
+		private void aviso(final String chave){
 			GLog.n(Messages.get(Renegado.class, chave + "_log"));
 			if (ShatteredPixelDungeon.scene() instanceof GameScene){
-				GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS),
-						Messages.get(Renegado.class, "cem_titulo"), Messages.get(Renegado.class, chave)));
+				com.watabou.noosa.Game.runOnRenderThread(new Callback() {
+					@Override
+					public void call() {
+						GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS),
+								Messages.get(Renegado.class, "cem_titulo"), Messages.get(Renegado.class, chave)));
+					}
+				});
 			}
 		}
 
 		private void escolherMutacao(final Hero h){
+			valor = piso();
 			final ArrayList<Lugar> op = new ArrayList<>();
 			ArrayList<String> nomes = new ArrayList<>();
 			for (Lugar l : Lugar.values()){
@@ -635,9 +641,13 @@ public class Renegado {
 				mutar(h, op.get(0));
 				return;
 			}
+			final String[] opcoes = nomes.toArray(new String[0]);
+			com.watabou.noosa.Game.runOnRenderThread(new Callback() {
+				@Override
+				public void call() {
 			GameScene.show(new WndOptions(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS),
 					Messages.get(Renegado.class, "mutacao_titulo"), Messages.get(Renegado.class, "mutacao_escolha"),
-					nomes.toArray(new String[0])){
+					opcoes){
 				@Override
 				protected void onSelect(int index) {
 					mutar(h, op.get(index));
@@ -645,6 +655,8 @@ public class Renegado {
 				@Override
 				public void onBackPressed() {
 					//a escolha é obrigatória
+				}
+			});
 				}
 			});
 		}

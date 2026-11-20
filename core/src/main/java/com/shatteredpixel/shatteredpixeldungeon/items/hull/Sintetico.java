@@ -299,8 +299,8 @@ public class Sintetico {
 			if (!apresentado){
 				apresentado = true;
 				if (ShatteredPixelDungeon.scene() instanceof GameScene){
-					GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME),
-							Messages.get(Sintetico.class, "intro_titulo"), Messages.get(Sintetico.class, "intro")));
+					com.watabou.noosa.Game.runOnRenderThread(new com.watabou.utils.Callback() { @Override public void call() { GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME),
+							Messages.get(Sintetico.class, "intro_titulo"), Messages.get(Sintetico.class, "intro"))); } });
 				}
 			}
 
@@ -316,8 +316,8 @@ public class Sintetico {
 					GLog.w(Messages.get(Sintetico.class, "baixa"));
 					if (!avisoBaixaJanela && ShatteredPixelDungeon.scene() instanceof GameScene){
 						avisoBaixaJanela = true;
-						GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME),
-								Messages.get(Sintetico.class, "baixa_titulo"), Messages.get(Sintetico.class, "baixa_janela")));
+						com.watabou.noosa.Game.runOnRenderThread(new com.watabou.utils.Callback() { @Override public void call() { GameScene.show(new WndTitledMessage(new ItemSprite(ItemSpriteSheet.ARTIFACT_TOME),
+								Messages.get(Sintetico.class, "baixa_titulo"), Messages.get(Sintetico.class, "baixa_janela"))); } });
 					}
 				}
 			} else if (energia >= AVISO_BAIXA){
