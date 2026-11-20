@@ -208,6 +208,15 @@ public enum Talent {
 	BODY_FORM(180, 4), MIND_FORM(181, 4), SPIRIT_FORM(182, 4),
 	//Power of Many T4
 	BEAMING_RAY(183, 4), LIFE_LINK(184, 4), STASIS(185, 4),
+	//Shattered Hull: Sintético, com os ícones dos talentos do Clérigo que ele substitui
+	EFICIENCIA_ENERGETICA(160), SENSORES_AMPLIADOS(161), REPARO_CAMPO(162), RECICLAGEM(163),
+	CHAVE_UNIVERSAL(164), DESARME_REMOTO(165), ISOLAMENTO(166), REDE_DRONES(167), TERMINAL_BOLSO(168),
+	RESERVA_EXPANDIDA(169, 3), INVASAO_PROLONGADA(170, 3),
+	INVASAO_REDE(171, 3), DRONE_COMBATE(172, 3), RETORNO_SINAL(173, 3),
+	PARA_RAIOS(174, 3), INVESTIDA_HIDRAULICA(175, 3), PLACAS_REPARO(176, 3),
+	RAIO_AMPLIADO(177, 4), CAMPO_RESIDUAL(178, 4), CAPTACAO(179, 4),
+	DISSIPACAO_CONTROLADA(180, 4), VELOCIDADE_EXTREMA(181, 4), PRIMEIRO_DISPARO(182, 4),
+	ENXAME_MAIOR(183, 4), NANODRONES_EXPLOSIVOS(184, 4), REPARO_ENXAME(185, 4),
 
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
@@ -1015,7 +1024,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
 				break;
 			case CLERIC:
-				Collections.addAll(tierTalents, SATIATED_SPELLS, HOLY_INTUITION, SEARING_LIGHT, SHIELD_OF_LIGHT);
+				Collections.addAll(tierTalents, EFICIENCIA_ENERGETICA, SENSORES_AMPLIADOS, REPARO_CAMPO, RECICLAGEM);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1044,7 +1053,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
 				break;
 			case CLERIC:
-				Collections.addAll(tierTalents, ENLIGHTENING_MEAL, RECALL_INSCRIPTION, SUNRAY, DIVINE_SENSE, BLESS);
+				Collections.addAll(tierTalents, CHAVE_UNIVERSAL, DESARME_REMOTO, ISOLAMENTO, REDE_DRONES, TERMINAL_BOLSO);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1073,7 +1082,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, PRECISE_ASSAULT, DEADLY_FOLLOWUP);
 				break;
 			case CLERIC:
-				Collections.addAll(tierTalents, CLEANSE, LIGHT_READING);
+				Collections.addAll(tierTalents, RESERVA_EXPANDIDA, INVASAO_PROLONGADA);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1134,10 +1143,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, UNENCUMBERED_SPIRIT, MONASTIC_VIGOR, COMBINED_ENERGY);
 				break;
 			case PRIEST:
-				Collections.addAll(tierTalents, HOLY_LANCE, HALLOWED_GROUND, MNEMONIC_PRAYER);
+				Collections.addAll(tierTalents, INVASAO_REDE, DRONE_COMBATE, RETORNO_SINAL);
 				break;
 			case PALADIN:
-				Collections.addAll(tierTalents, LAY_ON_HANDS, AURA_OF_PROTECTION, WALL_OF_LIGHT);
+				Collections.addAll(tierTalents, PARA_RAIOS, INVESTIDA_HIDRAULICA, PLACAS_REPARO);
 				break;
 		}
 		for (Talent talent : tierTalents){

@@ -1028,6 +1028,9 @@ public abstract class Mob extends Char {
 			EXP /= 2;
 		}
 
+		//Shattered Hull: abates recarregam a reserva do Sintético
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.abate(this, cause);
+
 		if (alignment == Alignment.ENEMY){
 			if (buff(Trap.HazardAssistTracker.class) != null){
 				Statistics.hazardAssistedKills++;

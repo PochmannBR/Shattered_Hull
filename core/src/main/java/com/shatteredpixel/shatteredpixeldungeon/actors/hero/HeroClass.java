@@ -264,6 +264,12 @@ public enum HeroClass {
 
 		Dungeon.quickslot.setSlot(0, tome);
 
+		//Shattered Hull: macacão de manutenção e reserva de energia cheia
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.MacacaoManutencao macacao = new com.shatteredpixel.shatteredpixeldungeon.items.hull.MacacaoManutencao();
+		macacao.identify();
+		hero.belongings.armor = macacao;
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.reserva(hero).encher();
+
 		new PotionOfPurity().identify();
 		new ScrollOfRemoveCurse().identify();
 	}
@@ -297,7 +303,7 @@ public enum HeroClass {
 			case DUELIST:
 				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
 			case CLERIC:
-				return new ArmorAbility[]{new AscendedForm(), new Trinity(), new PowerOfMany()};
+				return new ArmorAbility[]{new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.PulsoEletromagnetico(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.SobrecargaNucleo(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.EnxameNanodrones()};
 		}
 	}
 

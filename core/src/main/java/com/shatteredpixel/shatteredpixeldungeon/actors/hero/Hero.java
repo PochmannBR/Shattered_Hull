@@ -719,6 +719,11 @@ public class Hero extends Char {
 		float speed = super.speed();
 
 		speed *= RingOfHaste.speedMultiplier(this);
+
+		//Shattered Hull: modo de economia e sobrecarga do núcleo do Sintético
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.economia(this)) speed *= 0.67f;
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.Sobrecarga sobrecarga = buff(com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.Sobrecarga.class);
+		if (sobrecarga != null) speed *= sobrecarga.velocidade(this);
 		
 		if (belongings.armor() != null) {
 			speed = belongings.armor().speedFactor(this, speed);
@@ -1527,6 +1532,9 @@ public class Hero extends Char {
 	public int attackProc( final Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
 
+		//Shattered Hull: investida hidráulica do Couraçado
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.investida(this, enemy);
+
 		//Shattered Hull: munição especial do Exterminador também vale nos golpes
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.MunicaoEspecial.Ativa municao = buff(com.shatteredpixel.shatteredpixeldungeon.items.hull.MunicaoEspecial.Ativa.class);
 		if (municao != null) municao.disparar(enemy);
@@ -1637,6 +1645,9 @@ public class Hero extends Char {
 				|| buff(TimeStasis.class) != null) {
 			return;
 		}
+
+		//Shattered Hull: fraqueza elétrica e para-raios do Sintético
+		dmg = com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.danoRecebido(this, dmg, src);
 
 		//regular damage interrupt, triggers on any damage except specific mild DOT effects
 		// unless the player recently hit 'continue moving', in which case this is ignored

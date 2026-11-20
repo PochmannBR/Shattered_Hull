@@ -85,6 +85,7 @@ public abstract class ClericSpell {
 			hero.buff(Talent.SatiatedSpellsTracker.class).detach();
 		}
 		tome.spendCharge(chargeUse(hero));
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.registrarUso(hero, this);
 		Talent.onArtifactUsed(hero);
 		if (hero.subClass == HeroSubClass.PALADIN){
 			if (this != HolyWeapon.INSTANCE && hero.buff(HolyWeapon.HolyWepBuff.class) != null){
@@ -102,6 +103,8 @@ public abstract class ClericSpell {
 	}
 
 	public static ArrayList<ClericSpell> getSpellList(Hero cleric, int tier){
+		//Shattered Hull: o Sintético usa as habilidades do núcleo
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(cleric)) return com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.habilidades(cleric, tier);
 		ArrayList<ClericSpell> spells = new ArrayList<>();
 
 		if (tier == 1) {

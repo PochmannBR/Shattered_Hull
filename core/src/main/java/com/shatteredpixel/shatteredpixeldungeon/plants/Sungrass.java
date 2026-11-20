@@ -46,6 +46,8 @@ public class Sungrass extends Plant {
 	@Override
 	public void activate( Char ch ) {
 		
+		//Shattered Hull: plantas de cura não funcionam no Sintético
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(ch)) return;
 		if (ch != null){
 			if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
 				Buff.affect(ch, Healing.class).setHeal(ch.HT, 0, 1);

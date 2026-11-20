@@ -1388,6 +1388,8 @@ public abstract class Char extends Actor {
 	protected final HashSet<Class> immunities = new HashSet<>();
 	
 	public boolean isImmune(Class effect ){
+		//Shattered Hull: corpo de máquina do Sintético
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.imune(this, effect)) return true;
 		HashSet<Class> immunes = new HashSet<>(immunities);
 		for (Property p : properties()){
 			immunes.addAll(p.immunities());
