@@ -37,7 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Fe
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpectralBlades;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.ElementalBlast;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.BombardeioOrbital;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WarpBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WildMagic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.DeathMark;
@@ -200,6 +200,9 @@ public enum HeroClass {
 
 		Dungeon.quickslot.setSlot(0, staff);
 
+		//Shattered Hull: o transmissor começa com as cargas de pedido cheias
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.cargas(hero);
+
 		new ScrollOfUpgrade().identify();
 		new PotionOfLiquidFlame().identify();
 	}
@@ -286,7 +289,7 @@ public enum HeroClass {
 			case WARRIOR: default:
 				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
 			case MAGE:
-				return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
+				return new ArmorAbility[]{new BombardeioOrbital(), new WildMagic(), new WarpBeacon()};
 			case ROGUE:
 				return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
 			case HUNTRESS:

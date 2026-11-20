@@ -1527,6 +1527,10 @@ public class Hero extends Char {
 	public int attackProc( final Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
 
+		//Shattered Hull: munição especial do Exterminador também vale nos golpes
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.MunicaoEspecial.Ativa municao = buff(com.shatteredpixel.shatteredpixeldungeon.items.hull.MunicaoEspecial.Ativa.class);
+		if (municao != null) municao.disparar(enemy);
+
 		KindOfWeapon wep;
 		if (RingOfForce.fightingUnarmed(this) && !RingOfForce.unarmedGetsWeaponEnchantment(this)){
 			wep = null;
@@ -1683,6 +1687,8 @@ public class Hero extends Char {
 		int preHP = HP + shielding();
 		if (src instanceof Hunger) preHP -= shielding();
 		super.damage( dmg, src );
+		//Shattered Hull: sinal de emergência do Exterminador
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.sinalEmergencia(this);
 		int postHP = HP + shielding();
 		if (src instanceof Hunger) postHP -= shielding();
 		int effectiveDamage = preHP - postHP;

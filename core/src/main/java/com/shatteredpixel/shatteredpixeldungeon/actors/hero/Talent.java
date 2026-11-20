@@ -130,6 +130,14 @@ public enum Talent {
 	WILD_POWER(52, 4), FIRE_EVERYTHING(53, 4), CONSERVED_MAGIC(54, 4),
 	//Warp Beacon T4
 	TELEFRAG(55, 4), REMOTE_BEACON(56, 4), LONGRANGE_WARP(57, 4),
+	//Shattered Hull: Exterminador, com os ícones dos talentos do Mago que ele substitui
+	CONTAGEM_CURTA(32), IMPACTO_REFORCADO(33), EMBALAGEM_REFORCADA(34), REFEICAO_CAMPANHA(35),
+	RECARGA_SATELITE(36), MUNICAO_DURADOURA(37), TORRETA_REFORCADA(38), SINAL_EMERGENCIA(39), RECICLAGEM_CAPSULA(40),
+	CAPSULA_DUPLA(41, 3), ALCANCE_ORBITAL(42, 3),
+	REQUISICAO_PRIORITARIA(43, 3), ESTOQUE(44, 3), LOGISTICA(45, 3),
+	FOGO_SUPRESSAO(46, 3), SATURACAO(47, 3), CORRECAO_TIRO(48, 3),
+	AVISO_CURTO(49, 4), FRAGMENTACAO(50, 4), PERIMETRO_SEGURO(51, 4),
+	RAJADA_LONGA(52, 4), MUNICAO_ACOPLADA(53, 4), RETROALIMENTACAO(54, 4),
 
 	//Rogue T1
 	CACHED_RATIONS(64), THIEFS_INTUITION(65), SUCKER_PUNCH(66), PROTECTIVE_SHADOWS(67),
@@ -589,6 +597,8 @@ public enum Talent {
 	public static class NatureBerriesDropped extends CounterBuff{{revivePersists = true;}};
 
 	public static void onFoodEaten( Hero hero, float foodVal, Item foodSource ){
+		//Shattered Hull: refeição de campanha do Exterminador
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.refeicao(hero);
 		if (hero.hasTalent(HEARTY_MEAL)){
 			//4/6 HP healed, when hero is below 33% health (with a little rounding up)
 			if (hero.HP/(float)hero.HT < 0.334f) {
@@ -993,7 +1003,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, HEARTY_MEAL, VETERANS_INTUITION, PROVOKED_ANGER, IRON_WILL, QUICK_RELOAD);
 				break;
 			case MAGE:
-				Collections.addAll(tierTalents, EMPOWERING_MEAL, SCHOLARS_INTUITION, LINGERING_MAGIC, BACKUP_BARRIER);
+				Collections.addAll(tierTalents, CONTAGEM_CURTA, IMPACTO_REFORCADO, EMBALAGEM_REFORCADA, REFEICAO_CAMPANHA);
 				break;
 			case ROGUE:
 				Collections.addAll(tierTalents, CACHED_RATIONS, THIEFS_INTUITION, SUCKER_PUNCH, PROTECTIVE_SHADOWS, DEEP_RECON);
@@ -1022,7 +1032,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, IRON_STOMACH, LIQUID_WILLPOWER, RUNIC_TRANSFERENCE, LETHAL_MOMENTUM, IMPROVISED_PROJECTILES, AMMO_RESERVE);
 				break;
 			case MAGE:
-				Collections.addAll(tierTalents, ENERGIZING_MEAL, INSCRIBED_POWER, WAND_PRESERVATION, ARCANE_VISION, SHIELD_BATTERY);
+				Collections.addAll(tierTalents, RECARGA_SATELITE, MUNICAO_DURADOURA, TORRETA_REFORCADA, SINAL_EMERGENCIA, RECICLAGEM_CAPSULA);
 				break;
 			case ROGUE:
 				Collections.addAll(tierTalents, MYSTICAL_MEAL, INSCRIBED_STEALTH, WIDE_SEARCH, SILENT_STEPS, ROGUES_FORESIGHT, VANISH_IN_CHAOS);
@@ -1051,7 +1061,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, HOLD_FAST, STRONGMAN, STUNNING_BUTT);
 				break;
 			case MAGE:
-				Collections.addAll(tierTalents, DESPERATE_POWER, ALLY_WARP);
+				Collections.addAll(tierTalents, CAPSULA_DUPLA, ALCANCE_ORBITAL);
 				break;
 			case ROGUE:
 				Collections.addAll(tierTalents, ENHANCED_RINGS, LIGHT_CLOAK, SILENT_HEADSHOT);
@@ -1100,10 +1110,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, CLEAVE, LETHAL_DEFENSE, ENHANCED_COMBO);
 				break;
 			case BATTLEMAGE:
-				Collections.addAll(tierTalents, EMPOWERED_STRIKE, MYSTICAL_CHARGE, EXCESS_CHARGE);
+				Collections.addAll(tierTalents, REQUISICAO_PRIORITARIA, ESTOQUE, LOGISTICA);
 				break;
 			case WARLOCK:
-				Collections.addAll(tierTalents, SOUL_EATER, SOUL_SIPHON, NECROMANCERS_MINIONS);
+				Collections.addAll(tierTalents, FOGO_SUPRESSAO, SATURACAO, CORRECAO_TIRO);
 				break;
 			case ASSASSIN:
 				Collections.addAll(tierTalents, ENHANCED_LETHALITY, ASSASSINS_REACH, BOUNTY_HUNTER);
