@@ -76,6 +76,9 @@ public class Sintetico {
 	public static final int AVISO_BAIXA = 150;
 	public static final int ABATE = 25;
 	public static final int ABATE_CAMPEAO = 75;
+	//ajustados por Pablo em 21/11/2026, depois da simulação de energia
+	public static final int POR_NIVEL = 5;
+	public static final int POR_PONTO_RESERVA = 40;
 
 	public static boolean e(Char c){
 		return c instanceof Hero && ((Hero) c).heroClass == HeroClass.CLERIC;
@@ -162,8 +165,9 @@ public class Sintetico {
 		Hero h = Dungeon.hero;
 		if (!e(h) || m.alignment != Char.Alignment.ENEMY) return;
 		Reserva r = reserva(h);
+		//um chefe devolve metade da reserva máxima
 		if (Char.hasProp(m, Char.Property.BOSS)){
-			r.ganhar(r.max());
+			r.ganhar(r.max() / 2f);
 			return;
 		}
 		float v = m.buff(ChampionEnemy.class) != null ? ABATE_CAMPEAO : ABATE;
@@ -285,7 +289,7 @@ public class Sintetico {
 		public int max(){
 			Hero h = (Hero) target;
 			if (h == null) return 600;
-			return 600 + 10 * h.lvl + 100 * h.pointsInTalent(Talent.RESERVA_EXPANDIDA);
+			return 600 + POR_NIVEL * h.lvl + POR_PONTO_RESERVA * h.pointsInTalent(Talent.RESERVA_EXPANDIDA);
 		}
 
 		public float energia(){
