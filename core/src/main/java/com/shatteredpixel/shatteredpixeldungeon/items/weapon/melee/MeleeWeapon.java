@@ -67,15 +67,15 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public void activate(Char ch) {
 		super.activate(ch);
+		//Shattered Hull: o Renegado usa o medidor de assimilação no lugar das cargas
 		if (ch instanceof Hero && ((Hero) ch).heroClass == HeroClass.DUELIST){
-			Buff.affect(ch, Charger.class);
+			com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.medidor((Hero) ch);
 		}
 	}
 
 	@Override
 	public String defaultAction() {
-		if (Dungeon.hero != null && (Dungeon.hero.heroClass == HeroClass.DUELIST
-			|| Dungeon.hero.hasTalent(Talent.SWIFT_EQUIP))){
+		if (Dungeon.hero != null && Dungeon.hero.hasTalent(Talent.SWIFT_EQUIP)){
 			return AC_ABILITY;
 		} else {
 			return super.defaultAction();
@@ -85,9 +85,7 @@ public class MeleeWeapon extends Weapon {
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions(hero);
-		if (isEquipped(hero) && hero.heroClass == HeroClass.DUELIST){
-			actions.add(AC_ABILITY);
-		}
+		//Shattered Hull: o Renegado não usa as habilidades de arma da Duelista
 		return actions;
 	}
 
@@ -361,10 +359,7 @@ public class MeleeWeapon extends Weapon {
 			}
 		}
 
-		//the mage's staff has no ability as it can only be gained by the mage
-		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST && !(this instanceof MagesStaff)){
-			info += "\n\n" + abilityInfo();
-		}
+		//Shattered Hull: o Renegado não usa as habilidades de arma da Duelista, então a descrição não as mostra
 		
 		return info;
 	}

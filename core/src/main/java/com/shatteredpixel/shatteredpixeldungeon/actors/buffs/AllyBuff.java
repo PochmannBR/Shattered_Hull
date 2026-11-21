@@ -76,7 +76,7 @@ public abstract class AllyBuff extends Buff {
 			}
 			hero.earnExp(exp, enemy.getClass());
 
-			if (hero.subClass == HeroSubClass.MONK){
+			if (hero.subClass == HeroSubClass.MONK && hero.heroClass != com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass.DUELIST){
 				Buff.affect(hero, MonkEnergy.class).gainEnergy(enemy);
 			}
 		}

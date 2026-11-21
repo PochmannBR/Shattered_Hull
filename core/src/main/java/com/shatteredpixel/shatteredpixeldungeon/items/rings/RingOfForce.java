@@ -41,6 +41,9 @@ import java.util.ArrayList;
 
 public class RingOfForce extends Ring {
 
+	//Shattered Hull: o Renegado não usa a postura de luta da Duelista
+	private static final boolean DUELISTA_ORIGINAL = false;
+
 	{
 		icon = ItemSpriteSheet.Icons.RING_FORCE;
 		buffClass = Force.class;
@@ -158,7 +161,7 @@ public class RingOfForce extends Ring {
 	@Override
 	public String upgradeStat3(int level) {
 		if (cursed && cursedKnown) level = Math.min(-1, level-3);
-		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST){
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST && DUELISTA_ORIGINAL){
 			float tier = tier(Dungeon.hero != null ? Dungeon.hero.STR() : 10);
 			int bonus = Math.round(3+tier+(level*((4+2*tier)/8f)));
 			return (min(level+1, tier) + bonus) + "-" + (max(level+1, tier) + bonus);
@@ -177,14 +180,14 @@ public class RingOfForce extends Ring {
 	@Override
 	public void activate(Char ch) {
 		super.activate(ch);
-		if (ch instanceof Hero && ((Hero) ch).heroClass == HeroClass.DUELIST){
+		if (ch instanceof Hero && ((Hero) ch).heroClass == HeroClass.DUELIST && DUELISTA_ORIGINAL){
 			Buff.affect(ch, MeleeWeapon.Charger.class);
 		}
 	}
 
 	@Override
 	public String defaultAction() {
-		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST){
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST && DUELISTA_ORIGINAL){
 			return AC_ABILITY;
 		} else {
 			return super.defaultAction();
@@ -194,7 +197,7 @@ public class RingOfForce extends Ring {
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions(hero);
-		if (isEquipped(hero) && hero.heroClass == HeroClass.DUELIST){
+		if (isEquipped(hero) && hero.heroClass == HeroClass.DUELIST && DUELISTA_ORIGINAL){
 			actions.add(AC_ABILITY);
 		}
 		return actions;
@@ -238,7 +241,7 @@ public class RingOfForce extends Ring {
 	public String info() {
 		String info = super.info();
 
-		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST
+		if (Dungeon.hero != null && Dungeon.hero.heroClass == HeroClass.DUELIST && DUELISTA_ORIGINAL
 			&& (anonymous || isIdentified() || isEquipped(Dungeon.hero))){
 			//0 if unidentified, solo level if unequipped, combined level if equipped
 			int level = isIdentified() ? (isEquipped(Dungeon.hero) ? getBuffedBonus(Dungeon.hero, Force.class) : soloBuffedBonus()) : 0;

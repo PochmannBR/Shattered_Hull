@@ -130,6 +130,14 @@ public enum Talent {
 	WILD_POWER(52, 4), FIRE_EVERYTHING(53, 4), CONSERVED_MAGIC(54, 4),
 	//Warp Beacon T4
 	TELEFRAG(55, 4), REMOTE_BEACON(56, 4), LONGRANGE_WARP(57, 4),
+	//Shattered Hull: Exterminador, com os ícones dos talentos do Mago que ele substitui
+	CONTAGEM_CURTA(32), IMPACTO_REFORCADO(33), EMBALAGEM_REFORCADA(34), REFEICAO_CAMPANHA(35),
+	RECARGA_SATELITE(36), MUNICAO_DURADOURA(37), TORRETA_REFORCADA(38), SINAL_EMERGENCIA(39), RECICLAGEM_CAPSULA(40),
+	CAPSULA_DUPLA(41, 3), ALCANCE_ORBITAL(42, 3),
+	REQUISICAO_PRIORITARIA(43, 3), ESTOQUE(44, 3), LOGISTICA(45, 3),
+	FOGO_SUPRESSAO(46, 3), SATURACAO(47, 3), CORRECAO_TIRO(48, 3),
+	AVISO_CURTO(49, 4), FRAGMENTACAO(50, 4), PERIMETRO_SEGURO(51, 4),
+	RAJADA_LONGA(52, 4), MUNICAO_ACOPLADA(53, 4), RETROALIMENTACAO(54, 4),
 
 	//Rogue T1
 	CACHED_RATIONS(64), THIEFS_INTUITION(65), SUCKER_PUNCH(66), PROTECTIVE_SHADOWS(67),
@@ -200,6 +208,24 @@ public enum Talent {
 	BODY_FORM(180, 4), MIND_FORM(181, 4), SPIRIT_FORM(182, 4),
 	//Power of Many T4
 	BEAMING_RAY(183, 4), LIFE_LINK(184, 4), STASIS(185, 4),
+	//Shattered Hull: Renegado, com os ícones dos talentos da Duelista que ele substitui
+	COLETA_CUIDADOSA(128), METABOLISMO_ESTAVEL(129), ADAPTACAO_RAPIDA(130), SENTIDO_ENXAME(131),
+	INJECAO_EFICIENTE(132), USO_ECONOMICO(133), EJECAO_LIMPA(134), TECIDO_REGENERATIVO(135), FOME_ENXAME(136),
+	MUTACAO_ADAPTADA(137, 3), GOLPE_ASSIMILADOR(138, 3),
+	SURTO_PROLONGADO(139, 3), MUTACAO_PODEROSA(140, 3), FAIXA_ALTA(141, 3),
+	DOSE_DUPLA(142, 3), CALMA_COMBATE(143, 3), VIGILIA(144, 3),
+	DANO_ASSIMILADOR(145, 4), COLETA_FORCADA(146, 4), GOLPE_PURGADOR(147, 4),
+	FORMA_DURADOURA(148, 4), SALTO_CONTIDO(149, 4), REGENERACAO_ENXAME(150, 4),
+	RAIO_FEROMONIO(151, 4), FEROMONIO_DURADOURO(152, 4), EXAUSTAO(153, 4),
+	//Shattered Hull: Sintético, com os ícones dos talentos do Clérigo que ele substitui
+	EFICIENCIA_ENERGETICA(160), SENSORES_AMPLIADOS(161), REPARO_CAMPO(162), RECICLAGEM(163), GOLPE_ENERGIZADO(163),
+	CHAVE_UNIVERSAL(164), DESARME_REMOTO(165), ISOLAMENTO(166), REDE_DRONES(167), TERMINAL_BOLSO(168),
+	RESERVA_EXPANDIDA(169, 3), INVASAO_PROLONGADA(170, 3),
+	INVASAO_REDE(171, 3), DRONE_COMBATE(172, 3), RETORNO_SINAL(173, 3),
+	PARA_RAIOS(174, 3), INVESTIDA_HIDRAULICA(175, 3), PLACAS_REPARO(176, 3),
+	RAIO_AMPLIADO(177, 4), CAMPO_RESIDUAL(178, 4), CAPTACAO(179, 4),
+	DISSIPACAO_CONTROLADA(180, 4), VELOCIDADE_EXTREMA(181, 4), PRIMEIRO_DISPARO(182, 4),
+	ENXAME_MAIOR(183, 4), NANODRONES_EXPLOSIVOS(184, 4), REPARO_ENXAME(185, 4),
 
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
@@ -589,6 +615,9 @@ public enum Talent {
 	public static class NatureBerriesDropped extends CounterBuff{{revivePersists = true;}};
 
 	public static void onFoodEaten( Hero hero, float foodVal, Item foodSource ){
+		//Shattered Hull: refeição de campanha do Exterminador
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.refeicao(hero);
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.comeu(hero, foodSource);
 		if (hero.hasTalent(HEARTY_MEAL)){
 			//4/6 HP healed, when hero is below 33% health (with a little rounding up)
 			if (hero.HP/(float)hero.HT < 0.334f) {
@@ -993,7 +1022,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, HEARTY_MEAL, VETERANS_INTUITION, PROVOKED_ANGER, IRON_WILL, QUICK_RELOAD);
 				break;
 			case MAGE:
-				Collections.addAll(tierTalents, EMPOWERING_MEAL, SCHOLARS_INTUITION, LINGERING_MAGIC, BACKUP_BARRIER);
+				Collections.addAll(tierTalents, CONTAGEM_CURTA, IMPACTO_REFORCADO, EMBALAGEM_REFORCADA, REFEICAO_CAMPANHA);
 				break;
 			case ROGUE:
 				Collections.addAll(tierTalents, CACHED_RATIONS, THIEFS_INTUITION, SUCKER_PUNCH, PROTECTIVE_SHADOWS, DEEP_RECON);
@@ -1002,10 +1031,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
 				break;
 			case DUELIST:
-				Collections.addAll(tierTalents, STRENGTHENING_MEAL, ADVENTURERS_INTUITION, PATIENT_STRIKE, AGGRESSIVE_BARRIER);
+				Collections.addAll(tierTalents, COLETA_CUIDADOSA, METABOLISMO_ESTAVEL, ADAPTACAO_RAPIDA, SENTIDO_ENXAME);
 				break;
 			case CLERIC:
-				Collections.addAll(tierTalents, SATIATED_SPELLS, HOLY_INTUITION, SEARING_LIGHT, SHIELD_OF_LIGHT);
+				Collections.addAll(tierTalents, EFICIENCIA_ENERGETICA, SENSORES_AMPLIADOS, REPARO_CAMPO, GOLPE_ENERGIZADO);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1022,7 +1051,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, IRON_STOMACH, LIQUID_WILLPOWER, RUNIC_TRANSFERENCE, LETHAL_MOMENTUM, IMPROVISED_PROJECTILES, AMMO_RESERVE);
 				break;
 			case MAGE:
-				Collections.addAll(tierTalents, ENERGIZING_MEAL, INSCRIBED_POWER, WAND_PRESERVATION, ARCANE_VISION, SHIELD_BATTERY);
+				Collections.addAll(tierTalents, RECARGA_SATELITE, MUNICAO_DURADOURA, TORRETA_REFORCADA, SINAL_EMERGENCIA, RECICLAGEM_CAPSULA);
 				break;
 			case ROGUE:
 				Collections.addAll(tierTalents, MYSTICAL_MEAL, INSCRIBED_STEALTH, WIDE_SEARCH, SILENT_STEPS, ROGUES_FORESIGHT, VANISH_IN_CHAOS);
@@ -1031,10 +1060,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, LIQUID_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
 			case DUELIST:
-				Collections.addAll(tierTalents, FOCUSED_MEAL, LIQUID_AGILITY, WEAPON_RECHARGING, LETHAL_HASTE, SWIFT_EQUIP);
+				Collections.addAll(tierTalents, INJECAO_EFICIENTE, USO_ECONOMICO, EJECAO_LIMPA, TECIDO_REGENERATIVO, FOME_ENXAME);
 				break;
 			case CLERIC:
-				Collections.addAll(tierTalents, ENLIGHTENING_MEAL, RECALL_INSCRIPTION, SUNRAY, DIVINE_SENSE, BLESS);
+				Collections.addAll(tierTalents, CHAVE_UNIVERSAL, DESARME_REMOTO, ISOLAMENTO, REDE_DRONES, TERMINAL_BOLSO);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1051,7 +1080,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, HOLD_FAST, STRONGMAN, STUNNING_BUTT);
 				break;
 			case MAGE:
-				Collections.addAll(tierTalents, DESPERATE_POWER, ALLY_WARP);
+				Collections.addAll(tierTalents, CAPSULA_DUPLA, ALCANCE_ORBITAL);
 				break;
 			case ROGUE:
 				Collections.addAll(tierTalents, ENHANCED_RINGS, LIGHT_CLOAK, SILENT_HEADSHOT);
@@ -1060,10 +1089,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
 				break;
 			case DUELIST:
-				Collections.addAll(tierTalents, PRECISE_ASSAULT, DEADLY_FOLLOWUP);
+				Collections.addAll(tierTalents, MUTACAO_ADAPTADA, GOLPE_ASSIMILADOR);
 				break;
 			case CLERIC:
-				Collections.addAll(tierTalents, CLEANSE, LIGHT_READING);
+				Collections.addAll(tierTalents, RESERVA_EXPANDIDA, INVASAO_PROLONGADA);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -1100,10 +1129,10 @@ public enum Talent {
 				Collections.addAll(tierTalents, CLEAVE, LETHAL_DEFENSE, ENHANCED_COMBO);
 				break;
 			case BATTLEMAGE:
-				Collections.addAll(tierTalents, EMPOWERED_STRIKE, MYSTICAL_CHARGE, EXCESS_CHARGE);
+				Collections.addAll(tierTalents, REQUISICAO_PRIORITARIA, ESTOQUE, LOGISTICA);
 				break;
 			case WARLOCK:
-				Collections.addAll(tierTalents, SOUL_EATER, SOUL_SIPHON, NECROMANCERS_MINIONS);
+				Collections.addAll(tierTalents, FOGO_SUPRESSAO, SATURACAO, CORRECAO_TIRO);
 				break;
 			case ASSASSIN:
 				Collections.addAll(tierTalents, ENHANCED_LETHALITY, ASSASSINS_REACH, BOUNTY_HUNTER);
@@ -1118,16 +1147,16 @@ public enum Talent {
 				Collections.addAll(tierTalents, DURABLE_TIPS, BARKSKIN, SHIELDING_DEW);
 				break;
 			case CHAMPION:
-				Collections.addAll(tierTalents, VARIED_CHARGE, TWIN_UPGRADES, COMBINED_LETHALITY);
+				Collections.addAll(tierTalents, SURTO_PROLONGADO, MUTACAO_PODEROSA, FAIXA_ALTA);
 				break;
 			case MONK:
-				Collections.addAll(tierTalents, UNENCUMBERED_SPIRIT, MONASTIC_VIGOR, COMBINED_ENERGY);
+				Collections.addAll(tierTalents, DOSE_DUPLA, CALMA_COMBATE, VIGILIA);
 				break;
 			case PRIEST:
-				Collections.addAll(tierTalents, HOLY_LANCE, HALLOWED_GROUND, MNEMONIC_PRAYER);
+				Collections.addAll(tierTalents, INVASAO_REDE, DRONE_COMBATE, RETORNO_SINAL);
 				break;
 			case PALADIN:
-				Collections.addAll(tierTalents, LAY_ON_HANDS, AURA_OF_PROTECTION, WALL_OF_LIGHT);
+				Collections.addAll(tierTalents, PARA_RAIOS, INVESTIDA_HIDRAULICA, PLACAS_REPARO);
 				break;
 		}
 		for (Talent talent : tierTalents){

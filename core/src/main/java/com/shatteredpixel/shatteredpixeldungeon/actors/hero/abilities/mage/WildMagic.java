@@ -35,6 +35,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.WondrousResin;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.CursedWand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.MunicaoEspecial;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
@@ -68,48 +71,14 @@ public class WildMagic extends ArmorAbility {
 			return;
 		}
 
-		ArrayList<Wand> wands = hero.belongings.getAllItems(Wand.class);
-		Random.shuffle(wands);
-
-		float chargeUsePerShot = 0.5f * (float)Math.pow(0.67f, hero.pointsInTalent(Talent.CONSERVED_MAGIC));
-
-		for (Wand w : wands.toArray(new Wand[0])){
-			if (w.curCharges < 1 && w.partialCharge < chargeUsePerShot){
-				wands.remove(w);
-			}
-		}
-
-		int maxWands = 4 + Dungeon.hero.pointsInTalent(Talent.FIRE_EVERYTHING);
-
-		//second and third shots
-		if (wands.size() < maxWands){
-			ArrayList<Wand> seconds = new ArrayList<>(wands);
-			ArrayList<Wand> thirds = new ArrayList<>(wands);
-
-			for (Wand w : wands){
-				float totalCharge = w.curCharges + w.partialCharge;
-				if (totalCharge < 2*chargeUsePerShot){
-					seconds.remove(w);
-				}
-				if (totalCharge < 3*chargeUsePerShot
-					|| Random.Int(4) >= Dungeon.hero.pointsInTalent(Talent.FIRE_EVERYTHING)){
-					thirds.remove(w);
-				}
-			}
-
-			Random.shuffle(seconds);
-			while (!seconds.isEmpty() && wands.size() < maxWands){
-				wands.add(seconds.remove(0));
-			}
-
-			Random.shuffle(thirds);
-			while (!thirds.isEmpty() && wands.size() < maxWands){
-				wands.add(thirds.remove(0));
-			}
-		} else {
-			while (wands.size() > maxWands){
-				wands.remove(0);
-			}
+		//Shattered Hull: rajada do transmissor. Dispara a arma especial acoplada ao transmissor
+		//orbital várias vezes seguidas, sem gastar carga
+		ArrayList<Wand> wands = new ArrayList<>();
+		MagesStaff staff = hero.belongings.getItem(MagesStaff.class);
+		Wand acoplada = staff == null ? null : staff.wandAcoplada();
+		if (acoplada != null){
+			int disparos = 3 + hero.pointsInTalent(Talent.RAJADA_LONGA);
+			for (int i = 0; i < disparos; i++) wands.add(acoplada);
 		}
 
 		if (wands.size() == 0){
@@ -118,8 +87,6 @@ public class WildMagic extends ArmorAbility {
 		}
 
 		hero.busy();
-
-		Random.shuffle(wands);
 
 		Buff.affect(hero, WildMagicTracker.class, 0f);
 
@@ -134,8 +101,12 @@ public class WildMagic extends ArmorAbility {
 
 	Actor wildMagicActor = null;
 
+	//alvo do disparo atual, para a retroalimentação saber se ele morreu
+	private Char alvoAtual = null;
+
 	private void zapWand( ArrayList<Wand> wands, Hero hero, int cell){
 		Wand cur = wands.remove(0);
+		alvoAtual = Actor.findChar(cell);
 
 		Ballistica aim = new Ballistica(hero.pos, cell, cur.collisionProperties(cell));
 
@@ -216,10 +187,19 @@ public class WildMagic extends ArmorAbility {
 	}
 
 	private void afterZap( Wand cur, ArrayList<Wand> wands, Hero hero, int target){
-		cur.partialCharge -= 0.5f * (float)Math.pow(0.67f, hero.pointsInTalent(Talent.CONSERVED_MAGIC));
-		if (cur.partialCharge < 0) {
-			cur.partialCharge++;
-			cur.curCharges--;
+		//Shattered Hull: a rajada não gasta carga. A munição acoplada aplica a munição especial,
+		//e a retroalimentação pode devolver uma carga de pedido a cada inimigo morto
+		if (alvoAtual != null){
+			MunicaoEspecial.Ativa municao = hero.buff(MunicaoEspecial.Ativa.class);
+			if (municao != null && alvoAtual.isAlive() && Random.Int(4) < hero.pointsInTalent(Talent.MUNICAO_ACOPLADA)){
+				MunicaoEspecial.aplicar(municao.efeito, alvoAtual);
+			}
+			if (!alvoAtual.isAlive() && alvoAtual.alignment == Char.Alignment.ENEMY
+					&& Random.Int(4) < hero.pointsInTalent(Talent.RETROALIMENTACAO)){
+				PedidoSuprimento.Cargas c = PedidoSuprimento.cargas(hero);
+				if (c != null) c.ganhar(1);
+			}
+			alvoAtual = null;
 		}
 		if (wildMagicActor != null){
 			wildMagicActor.next();
@@ -248,11 +228,7 @@ public class WildMagic extends ArmorAbility {
 			}
 			Item.updateQuickslot();
 			Invisibility.dispel();
-			if (Random.Int(4) >= hero.pointsInTalent(Talent.CONSERVED_MAGIC)) {
-				hero.spendAndNext(Actor.TICK);
-			} else {
-				hero.next();
-			}
+			hero.spendAndNext(Actor.TICK);
 		}
 	}
 
@@ -263,6 +239,6 @@ public class WildMagic extends ArmorAbility {
 
 	@Override
 	public Talent[] talents() {
-		return new Talent[]{Talent.WILD_POWER, Talent.FIRE_EVERYTHING, Talent.CONSERVED_MAGIC, Talent.HEROIC_ENERGY};
+		return new Talent[]{Talent.RAJADA_LONGA, Talent.MUNICAO_ACOPLADA, Talent.RETROALIMENTACAO, Talent.HEROIC_ENERGY};
 	}
 }

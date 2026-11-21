@@ -63,6 +63,13 @@ public class Hunger extends Buff implements Hero.Doom {
 	@Override
 	public boolean act() {
 
+		//Shattered Hull: o Sintético não sente fome, ele usa a reserva de energia
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(target)){
+			level = 0;
+			spend(TICK);
+			return true;
+		}
+
 		if (Dungeon.level.locked
 				|| target.buff(WellFed.class) != null
 				|| SPDSettings.intro()

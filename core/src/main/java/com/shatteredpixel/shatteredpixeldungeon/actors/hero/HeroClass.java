@@ -37,7 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Fe
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpectralBlades;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.ElementalBlast;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.BombardeioOrbital;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WarpBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WildMagic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.DeathMark;
@@ -200,6 +200,10 @@ public enum HeroClass {
 
 		Dungeon.quickslot.setSlot(0, staff);
 
+		//Shattered Hull: o transmissor começa com as cargas de pedido cheias
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.cargas(hero);
+		com.shatteredpixel.shatteredpixeldungeon.journal.Document.ADVENTURERS_GUIDE.findPage(com.shatteredpixel.shatteredpixeldungeon.journal.Document.GUIDE_SUPRIMENTO);
+
 		new ScrollOfUpgrade().identify();
 		new PotionOfLiquidFlame().identify();
 	}
@@ -237,14 +241,18 @@ public enum HeroClass {
 
 	private static void initDuelist( Hero hero ) {
 
-		(hero.belongings.weapon = new Rapier()).identify();
+		//Shattered Hull: faca de abordagem, dois injetores supressores e a amostra de rastejador instalada
+		(hero.belongings.weapon = new com.shatteredpixel.shatteredpixeldungeon.items.hull.FacaAbordagem()).identify();
 		hero.belongings.weapon.activate(hero);
 
-		ThrowingSpike spikes = new ThrowingSpike();
-		spikes.quantity(2).identify().collect(); //set quantity is 3, but Duelist starts with 2
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor injetores = new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor();
+		injetores.quantity(2).identify().collect();
+
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.medidor(hero).instalar(com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.Amostra.MANDIBULAS);
+		com.shatteredpixel.shatteredpixeldungeon.journal.Document.ADVENTURERS_GUIDE.findPage(com.shatteredpixel.shatteredpixeldungeon.journal.Document.GUIDE_ASSIMILACAO);
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
-		Dungeon.quickslot.setSlot(1, spikes);
+		Dungeon.quickslot.setSlot(1, injetores);
 
 		new PotionOfStrength().identify();
 		new ScrollOfMirrorImage().identify();
@@ -260,6 +268,13 @@ public enum HeroClass {
 		hero.belongings.artifact.activate( hero );
 
 		Dungeon.quickslot.setSlot(0, tome);
+
+		//Shattered Hull: macacão de manutenção e reserva de energia cheia
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.MacacaoManutencao macacao = new com.shatteredpixel.shatteredpixeldungeon.items.hull.MacacaoManutencao();
+		macacao.identify();
+		hero.belongings.armor = macacao;
+		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.reserva(hero).encher();
+		com.shatteredpixel.shatteredpixeldungeon.journal.Document.ADVENTURERS_GUIDE.findPage(com.shatteredpixel.shatteredpixeldungeon.journal.Document.GUIDE_SINTETICO);
 
 		new PotionOfPurity().identify();
 		new ScrollOfRemoveCurse().identify();
@@ -286,15 +301,15 @@ public enum HeroClass {
 			case WARRIOR: default:
 				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
 			case MAGE:
-				return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
+				return new ArmorAbility[]{new BombardeioOrbital(), new WildMagic(), new WarpBeacon()};
 			case ROGUE:
 				return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case DUELIST:
-				return new ArmorAbility[]{new Challenge(), new ElementalStrike(), new Feint()};
+				return new ArmorAbility[]{new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.AssimilacaoForcada(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.FormaEnxameAbility(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.FeromonioComando()};
 			case CLERIC:
-				return new ArmorAbility[]{new AscendedForm(), new Trinity(), new PowerOfMany()};
+				return new ArmorAbility[]{new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.PulsoEletromagnetico(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.SobrecargaNucleo(), new com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.cleric.EnxameNanodrones()};
 		}
 	}
 

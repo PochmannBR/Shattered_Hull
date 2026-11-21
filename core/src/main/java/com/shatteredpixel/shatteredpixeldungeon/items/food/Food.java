@@ -72,6 +72,12 @@ public class Food extends Item {
 		super.execute( hero, action );
 
 		if (action.equals( AC_EAT )) {
+
+			//Shattered Hull: o Sintético não come
+			if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(hero)){
+				GLog.w( Messages.get(com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.class, "nao_come") );
+				return;
+			}
 			
 			detach( hero.belongings.backpack );
 			Catalog.countUse(getClass());
