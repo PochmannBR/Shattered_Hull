@@ -46,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.Abr
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.Autorreparo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.BarreiraTemporaria;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.ChamarDrone;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.DescargaEletrica;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.DesligarArmadilha;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.InvadirMaquina;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.spells.sintetico.ReligarTerminal;
@@ -103,6 +104,7 @@ public class Sintetico {
 	public static ArrayList<ClericSpell> habilidades(Hero h, int nivel){
 		ArrayList<ClericSpell> lista = new ArrayList<>();
 		if (nivel == 1){
+			lista.add(DescargaEletrica.INSTANCE);
 			lista.add(DesligarArmadilha.INSTANCE);
 			lista.add(AbrirFechadura.INSTANCE);
 			lista.add(Autorreparo.INSTANCE);
@@ -231,6 +233,20 @@ public class Sintetico {
 	public static float fatorKit(Hero h){
 		if (!e(h)) return 1f;
 		return 1f + 0.25f * h.pointsInTalent(Talent.REPARO_CAMPO);
+	}
+
+	public static final int CUSTO_GOLPE = 10;
+
+	//golpe energizado: cada golpe com a chave de torque gasta 10 de energia por mais dano,
+	//só com a reserva acima do aviso de reserva baixa
+	public static int golpeEnergizado(Hero h, Char inimigo, int dano){
+		int p = h.pointsInTalent(Talent.GOLPE_ENERGIZADO);
+		if (p == 0 || !e(h) || inimigo == null) return dano;
+		if (!(h.belongings.attackingWeapon() instanceof com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cudgel)) return dano;
+		if (energia(h) < AVISO_BAIXA + CUSTO_GOLPE) return dano;
+		gastar(h, CUSTO_GOLPE);
+		if (inimigo.sprite != null) inimigo.sprite.centerEmitter().burst(com.shatteredpixel.shatteredpixeldungeon.effects.particles.SparkParticle.FACTORY, 3);
+		return dano + 1 + p;
 	}
 
 	public static final int CUSTO_INVESTIDA = 20;

@@ -1542,6 +1542,7 @@ public class Hero extends Char {
 		}
 
 		//Shattered Hull: investida hidráulica do Couraçado
+		damage = com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.golpeEnergizado(this, enemy, damage);
 		com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.investida(this, enemy);
 
 		//Shattered Hull: munição especial do Exterminador também vale nos golpes
