@@ -157,8 +157,22 @@ public class Sintetico {
 
 	//---------------------------------------------------------------- recarga por abate
 
+	//0.9.1: máquinas são uma lista fechada, decidida por Pablo em 22/11/2026. Antes valia todo inimigo
+	//inorgânico do jogo original, o que pegava a casca e o colosso de carapaça, que no Hull são do enxame.
+	//Os cristais de Laztro ficam de fora; os hologramas entram, porque são projeções de máquina.
+	private static final Class<?>[] MAQUINAS = {
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DM100.class,	//drone de segurança
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DM200.class,	//drones mineradores, o corroído também
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DM300.class,	//perfuratriz da Garra Turva
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Pylon.class,	//torre de energia
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue.class,	//autômatos de guarda e blindado
+		com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith.class	//hologramas corrompido e de tripulante
+	};
+
 	public static boolean maquina(Char ch){
-		return ch != null && Char.hasProp(ch, Char.Property.INORGANIC);
+		if (ch == null) return false;
+		for (Class<?> c : MAQUINAS) if (c.isInstance(ch)) return true;
+		return false;
 	}
 
 	public static void abate(Mob m, Object causa){
