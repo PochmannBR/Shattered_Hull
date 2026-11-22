@@ -100,6 +100,15 @@ public class PedidoSuprimento {
 		return hero != null && hero.heroClass == HeroClass.MAGE;
 	}
 
+	//nível do lançador de torretas que a cápsula entrega. 0.9.1, decisão de Pablo em 22/11/2026: a leve
+	//começa no nível 2, com 3 disparos, e passa ao nível 3, com 5 disparos e 35 de vida, a partir da região 3.
+	//No nível 1 do jogo original o posto se desfazia depois de um único disparo.
+	public static int nivelTorreta(Tipo tipo, int regiao, int embalagem){
+		int tier = tipo == Tipo.TORRETA_LEVE ? (regiao >= 3 ? 3 : 2) : Math.min(6, 3 + regiao / 2);
+		if (embalagem >= 2) tier = Math.min(6, tier + 1);
+		return tier;
+	}
+
 	public static int regiaoAlcancada(){
 		return Math.min(5, (Math.max(1, Math.max(Statistics.deepestFloor, Dungeon.depth)) - 1) / 5 + 1);
 	}
@@ -341,8 +350,7 @@ public class PedidoSuprimento {
 			case TORRETA_LEVE: case TORRETA_PESADA: {
 				int p = livre(cell);
 				if (p == -1) break;
-				int tier = tipo == Tipo.TORRETA_LEVE ? Math.min(3, 1 + r / 2) : Math.min(6, 3 + r / 2);
-				if (emb >= 2) tier = Math.min(6, tier + 1);
+				int tier = nivelTorreta(tipo, r, emb);
 				WandOfWarding.Ward ward = new WandOfWarding.Ward();
 				ward.pos = p;
 				ward.configurar(tier, 1 + hero.lvl / 3);
