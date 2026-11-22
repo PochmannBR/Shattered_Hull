@@ -139,8 +139,9 @@ public class PedidoSuprimento {
 		return Math.max(0, 2 - hero.pointsInTalent(Talent.CONTAGEM_CURTA));
 	}
 
+	//ajustado por Pablo em 22/11/2026, depois da simulação: a cápsula é um golpe de abertura, não um abate certo
 	public static int dano(Hero hero){
-		float d = 4 + 2 * hero.lvl;
+		float d = 2 + hero.lvl;
 		d *= 1f + 0.2f * hero.pointsInTalent(Talent.IMPACTO_REFORCADO);
 		if (hero.subClass == HeroSubClass.WARLOCK) d *= 1.5f;
 		return Math.round(d);
@@ -242,7 +243,8 @@ public class PedidoSuprimento {
 	public static void impacto(int cell, Tipo tipo, boolean extra){
 		Hero hero = Dungeon.hero;
 		if (hero == null || Dungeon.level == null) return;
-		boolean area = hero.subClass == HeroSubClass.WARLOCK;
+		//a área de 3 por 3 do Observador vale só para o ataque orbital
+		boolean area = hero.subClass == HeroSubClass.WARLOCK && tipo == Tipo.ATAQUE;
 		int dano = dano(hero);
 		if (tipo == Tipo.ATAQUE) dano *= 2;
 		if (extra) dano = Math.max(1, dano / 2);

@@ -118,7 +118,9 @@ public class BombardeioOrbital extends ArmorAbility {
 	public static void cair(int cell){
 		Hero hero = Dungeon.hero;
 		if (hero == null) return;
-		int dano = PedidoSuprimento.dano(hero);
+		//o bombardeio mantém o dano de antes do ajuste das cápsulas: 4 mais 2 por nível
+		int dano = Math.round((4 + 2 * hero.lvl) * (1f + 0.2f * hero.pointsInTalent(Talent.IMPACTO_REFORCADO))
+				* (hero.subClass == com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass.WARLOCK ? 1.5f : 1f));
 		atingir(hero, cell, dano);
 		int pf = hero.pointsInTalent(Talent.FRAGMENTACAO);
 		if (pf > 0){
