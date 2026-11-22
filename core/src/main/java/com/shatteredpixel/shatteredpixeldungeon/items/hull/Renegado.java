@@ -882,7 +882,8 @@ public class Renegado {
 			if (lugares[i] == VAZIO) lugares[i] = TECIDO;
 			else mutado[i] = true;
 			valor = piso();
-			if (travados() == 3) aviso("cem_terceira");
+			//0.9.1: o aviso do fim vem quando as quatro partes já mutaram, porque só a vez seguinte assimila
+			if (travados() >= 4) aviso("cem_quarta");
 			else aviso("cem_mutacao");
 			ActionIndicator.refresh();
 		}
@@ -947,7 +948,7 @@ public class Renegado {
 
 		@Override
 		public void tintIcon(Image icon) {
-			if (travados() >= 3) icon.hardlight(1f, 0.1f, 0.1f);
+			if (travados() >= 4) icon.hardlight(1f, 0.1f, 0.1f);
 			else if (valor > 100) icon.hardlight(1f, 0.25f, 0.1f);
 			else if (valor >= 75) icon.hardlight(1f, 0.5f, 0.1f);
 			else if (valor >= 50) icon.hardlight(1f, 0.9f, 0.3f);
@@ -976,7 +977,7 @@ public class Renegado {
 				if (mutado[l.ordinal()]) nome += " " + Messages.get(Renegado.class, "mutada");
 				sb.append("\n").append(Messages.get(Renegado.class, "lugar_" + l.name().toLowerCase())).append(": ").append(nome);
 			}
-			if (travados() >= 3) sb.append("\n\n").append(Messages.get(this, "desc_perigo"));
+			if (travados() >= 4) sb.append("\n\n").append(Messages.get(this, "desc_perigo"));
 			return sb.toString();
 		}
 
@@ -993,7 +994,7 @@ public class Renegado {
 
 		@Override
 		public int indicatorColor() {
-			return travados() >= 3 ? 0x880000 : 0x335522;
+			return travados() >= 4 ? 0x880000 : 0x335522;
 		}
 
 		@Override
