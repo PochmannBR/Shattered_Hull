@@ -26,13 +26,17 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Fire;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Web;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Burning;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
@@ -43,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.*;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
@@ -51,6 +56,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -87,16 +93,40 @@ public class Renegado {
 		ESTILHACOS(Lugar.TRONCO, 20, Skeleton.class),
 		BOTE(Lugar.PERNAS, 20, Snake.class),
 		TUNEL(Lugar.PERNAS, 20, Crab.class),
-		SALTO(Lugar.PERNAS, 15, PhantomPiranha.class);
+		SALTO(Lugar.PERNAS, 15, PhantomPiranha.class),
+		//criaturas mais fortes, das regiões 3 a 5; a classe tem de ser exata, porque o lança-ferrões
+		//ácido herda do lança-ferrões e o mantídeo veterano herda do mantídeo
+		TEIA(Lugar.CABECA, 15, Spinner.class, true),
+		OLHAR(Lugar.CABECA, 25, Eye.class, true),
+		ENCANTO(Lugar.CABECA, 25, Succubus.class, true),
+		FOICES(Lugar.BRACOS, 15, Monk.class, true),
+		FERRAO(Lugar.BRACOS, 15, Scorpio.class, true),
+		FERRAO_ACIDO(Lugar.BRACOS, 20, Acidic.class, true),
+		SEGUNDA_CHANCE(Lugar.TRONCO, 25, Ghoul.class, true),
+		CARAPACA(Lugar.TRONCO, 20, Golem.class, true),
+		COMBUSTAO(Lugar.TRONCO, 20, Elemental.FireElemental.class, true),
+		SALTO_ESTRIPADOR(Lugar.PERNAS, 20, RipperDemon.class, true),
+		FOCO(Lugar.PERNAS, 10, Senior.class, true),
+		RASTRO_GELIDO(Lugar.PERNAS, 15, Elemental.FrostElemental.class, true);
 
 		public final Lugar lugar;
 		public final int medidor;
 		public final Class<? extends Mob> fonte;
+		public final boolean exata;
 
 		Amostra(Lugar lugar, int medidor, Class<? extends Mob> fonte){
+			this(lugar, medidor, fonte, false);
+		}
+
+		Amostra(Lugar lugar, int medidor, Class<? extends Mob> fonte, boolean exata){
 			this.lugar = lugar;
 			this.medidor = medidor;
 			this.fonte = fonte;
+			this.exata = exata;
+		}
+
+		public boolean de(Mob m){
+			return exata ? m.getClass() == fonte : fonte.isInstance(m);
 		}
 
 		public String nome(){
@@ -108,7 +138,13 @@ public class Renegado {
 		}
 
 		public boolean comAlvo(){
-			return this != PLACA && this != GELATINOSO && this != ESTILHACOS && this != COMANDO;
+			switch (this){
+				case PLACA: case GELATINOSO: case ESTILHACOS: case COMANDO:
+				case SEGUNDA_CHANCE: case CARAPACA: case COMBUSTAO: case FOCO: case RASTRO_GELIDO:
+					return false;
+				default:
+					return true;
+			}
 		}
 	}
 
@@ -128,6 +164,13 @@ public class Renegado {
 	//consulta sem criar o buff, para não entrar em laço com as imunidades
 	private static Medidor ver(Hero h){
 		return h == null ? null : h.buff(Medidor.class);
+	}
+
+	//tolerância: o medidor enche em 100, mas o surto só vem ao passar de 100 mais 3 por nível acima do primeiro
+	public static final int TOLERANCIA_POR_NIVEL = 3;
+
+	public static int limite(Hero h){
+		return 100 + TOLERANCIA_POR_NIVEL * Math.max(0, h.lvl - 1);
 	}
 
 	public static float valor(Hero h){
@@ -152,7 +195,7 @@ public class Renegado {
 
 	public static Amostra amostraDe(Mob m){
 		ArrayList<Amostra> op = new ArrayList<>();
-		for (Amostra a : Amostra.values()) if (a.fonte.isInstance(m)) op.add(a);
+		for (Amostra a : Amostra.values()) if (a.de(m)) op.add(a);
 		return op.isEmpty() ? null : Random.element(op);
 	}
 
@@ -201,10 +244,16 @@ public class Renegado {
 		return Math.max(0, 1f - 0.25f * h.pointsInTalent(Talent.MUTACAO_ADAPTADA));
 	}
 
-	//enxame hesita em atacar acima da faixa alta
+	//enxame hesita em atacar acima da faixa alta; o foco do mantídeo veterano desvia um ataque qualquer
 	public static boolean hesita(Char atacante, Char defensor){
-		if (!e(defensor) || !enxame(atacante)) return false;
-		return valor((Hero) defensor) >= inicioFaixaAlta((Hero) defensor) && Random.Int(4) == 0;
+		if (!e(defensor) || atacante == defensor) return false;
+		Foco foco = defensor.buff(Foco.class);
+		if (foco != null){
+			foco.detach();
+			return true;
+		}
+		if (!enxame(atacante)) return false;
+		return valor((Hero) defensor) >= inicioFaixaAlta((Hero) defensor) && Random.Int(8) == 0;
 	}
 
 	public static boolean imune(Char c, Class efeito){
@@ -222,6 +271,18 @@ public class Renegado {
 		}
 		if (h.buff(Gelatinoso.class) != null && dmg > 6){
 			dmg = 6 + (dmg - 6) / 2;
+		}
+		Carapaca cp = h.buff(Carapaca.class);
+		if (cp != null && src instanceof Char){
+			dmg = Math.max(0, dmg - Math.round(Random.NormalIntRange(1 + h.lvl / 4, 3 + h.lvl / 2) * cp.potencia));
+		}
+		SegundaChance sc = h.buff(SegundaChance.class);
+		if (sc != null && dmg >= h.HP + h.shielding()){
+			sc.detach();
+			h.HP = Math.max(h.HP, Math.round(h.HT * 0.2f * sc.potencia));
+			if (h.sprite != null) h.sprite.emitter().burst(com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle.UP, 8);
+			GLog.p(Messages.get(Renegado.class, "segunda_chance"));
+			return 0;
 		}
 		//ácido e esporos alimentam o tecido do enxame: o medidor sobe um pouco
 		if (m != null && acidoOuEsporo(src)){
@@ -519,6 +580,145 @@ public class Renegado {
 				h.spendAndNext(Actor.TICK);
 				break;
 			}
+			default:
+				executarNova(h, a, cell, p);
+				break;
+		}
+	}
+
+	//inimigo visível ao alcance, com caminho livre para um projétil
+	private static Char alvoADistancia(Hero h, int cell, int alcance, boolean projetil){
+		Char ch = Actor.findChar(cell);
+		if (ch == null || ch == h || ch.alignment == Char.Alignment.ALLY || !Dungeon.level.heroFOV[cell]
+				|| Dungeon.level.distance(h.pos, cell) > alcance
+				|| (projetil && new Ballistica(h.pos, cell, Ballistica.PROJECTILE).collisionPos != cell)){
+			GLog.w(Messages.get(Renegado.class, "sem_alvo"));
+			return null;
+		}
+		return ch;
+	}
+
+	private static void instantanea(Hero h, Amostra a){
+		concluir(h, a);
+		h.spendAndNext(Actor.TICK);
+	}
+
+	private static void executarNova(final Hero h, final Amostra a, int cell, final float p){
+		switch (a){
+			case TEIA: {
+				final Char alvo = alvoADistancia(h, cell, 6, true);
+				if (alvo == null) return;
+				Buff.prolong(alvo, Roots.class, 4f * p);
+				GameScene.add(Blob.seed(alvo.pos, 20, Web.class));
+				Sample.INSTANCE.play(Assets.Sounds.MISS);
+				instantanea(h, a);
+				break;
+			}
+			case OLHAR: {
+				if (cell == h.pos){
+					GLog.w(Messages.get(Renegado.class, "sem_alvo"));
+					return;
+				}
+				Ballistica raio = new Ballistica(h.pos, cell, Ballistica.STOP_SOLID);
+				int fim = Math.min(raio.dist, 8);
+				int dano = Math.round(Random.NormalIntRange(3 + h.lvl, 6 + 2 * h.lvl) * p);
+				for (int c : raio.subPath(1, fim)){
+					Char ch = Actor.findChar(c);
+					if (ch != null && ch != h && ch.alignment != Char.Alignment.ALLY) ch.damage(dano, h);
+				}
+				if (h.sprite != null && h.sprite.parent != null){
+					h.sprite.parent.add(new Beam.DeathRay(h.sprite.center(), DungeonTilemap.raisedTileCenterToWorld(raio.path.get(fim))));
+				}
+				Sample.INSTANCE.play(Assets.Sounds.RAY);
+				instantanea(h, a);
+				break;
+			}
+			case ENCANTO: {
+				final Char alvo = alvoADistancia(h, cell, 4, false);
+				if (alvo == null) return;
+				if (Char.hasProp(alvo, Char.Property.BOSS) || Char.hasProp(alvo, Char.Property.MINIBOSS) || alvo.isImmune(Charm.class)){
+					GLog.w(Messages.get(Renegado.class, "encanto_imune"));
+				} else {
+					Charm c = Buff.affect(alvo, Charm.class, 5f * p);
+					c.object = h.id();
+					if (alvo.sprite != null) alvo.sprite.centerEmitter().start(com.shatteredpixel.shatteredpixeldungeon.effects.Speck.factory(com.shatteredpixel.shatteredpixeldungeon.effects.Speck.HEART), 0.2f, 5);
+				}
+				Sample.INSTANCE.play(Assets.Sounds.CHARMS);
+				instantanea(h, a);
+				break;
+			}
+			case FOICES: {
+				final Char alvo = inimigoAdjacente(h, cell);
+				if (alvo == null) return;
+				golpe(h, a, alvo, 0.7f * p, 0, new Callback() {
+					@Override
+					public void call() {
+						if (alvo.isAlive()) h.attack(alvo, 0.7f * p, 0, Char.INFINITE_ACCURACY);
+					}
+				});
+				break;
+			}
+			case FERRAO: case FERRAO_ACIDO: {
+				final Char alvo = alvoADistancia(h, cell, 6, true);
+				if (alvo == null) return;
+				golpe(h, a, alvo, 1f, 0, new Callback() {
+					@Override
+					public void call() {
+						if (!alvo.isAlive()) return;
+						if (a == Amostra.FERRAO) Buff.prolong(alvo, Cripple.class, 3f * p);
+						else Buff.affect(alvo, Ooze.class).set(Ooze.DURATION * p);
+					}
+				});
+				break;
+			}
+			case SEGUNDA_CHANCE:
+				Buff.affect(h, SegundaChance.class, 50f).potencia = p;
+				Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
+				instantanea(h, a);
+				break;
+			case CARAPACA:
+				Buff.affect(h, Carapaca.class, 10f).potencia = p;
+				Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
+				instantanea(h, a);
+				break;
+			case COMBUSTAO: {
+				int dano = Math.round(Random.NormalIntRange(2 + h.lvl / 2, 5 + h.lvl) * p);
+				for (int n : PathFinder.NEIGHBOURS8){
+					Char ch = Actor.findChar(h.pos + n);
+					if (ch == null || ch.alignment == Char.Alignment.ALLY) continue;
+					ch.damage(dano, h);
+					if (ch.isAlive()) Buff.affect(ch, Burning.class).reignite(ch, 4f * p);
+				}
+				if (Dungeon.level.heroFOV[h.pos]) CellEmitter.center(h.pos).burst(com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle.FACTORY, 12);
+				Sample.INSTANCE.play(Assets.Sounds.BURNING);
+				instantanea(h, a);
+				break;
+			}
+			case SALTO_ESTRIPADOR: {
+				Char alvo = alvoADistancia(h, cell, 6, false);
+				if (alvo == null) return;
+				int destino = celulaAoLado(h, cell);
+				if (destino == -1){
+					GLog.w(Messages.get(Renegado.class, "sem_espaco"));
+					return;
+				}
+				if (destino != h.pos) ScrollOfTeleportation.appear(h, destino);
+				Dungeon.level.occupyCell(h);
+				golpe(h, a, alvo, 1.5f * p, 0, null);
+				break;
+			}
+			case FOCO:
+				Buff.affect(h, Foco.class, 30f * p);
+				Sample.INSTANCE.play(Assets.Sounds.CHARGEUP);
+				instantanea(h, a);
+				break;
+			case RASTRO_GELIDO:
+				Buff.affect(h, RastroGelido.class).deixar(10f * p);
+				Sample.INSTANCE.play(Assets.Sounds.SHATTER);
+				instantanea(h, a);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -602,8 +802,10 @@ public class Renegado {
 
 		public void subir(float v){
 			if (v <= 0) return;
-			valor = Math.min(100, valor + v);
-			if (valor >= 100) chegou100();
+			Hero h = (Hero) target;
+			int lim = limite(h);
+			valor = Math.min(lim, valor + v);
+			if (valor >= lim) chegou100();
 		}
 
 		private void chegou100(){
@@ -746,6 +948,7 @@ public class Renegado {
 		@Override
 		public void tintIcon(Image icon) {
 			if (travados() >= 3) icon.hardlight(1f, 0.1f, 0.1f);
+			else if (valor > 100) icon.hardlight(1f, 0.25f, 0.1f);
 			else if (valor >= 75) icon.hardlight(1f, 0.5f, 0.1f);
 			else if (valor >= 50) icon.hardlight(1f, 0.9f, 0.3f);
 			else icon.hardlight(0.5f, 1f, 0.4f);
@@ -753,18 +956,20 @@ public class Renegado {
 
 		@Override
 		public float iconFadePercent() {
-			return 1f - valor / 100f;
+			return 1f - Math.min(100, valor) / 100f;
 		}
 
 		@Override
 		public String iconTextDisplay() {
+			//acima de 100, mostra quanto da tolerância já foi usado
+			if (valor > 100) return "100+" + ((int) valor - 100);
 			return Integer.toString((int) valor);
 		}
 
 		@Override
 		public String desc() {
 			Hero h = (Hero) target;
-			StringBuilder sb = new StringBuilder(Messages.get(this, "desc", (int) valor, piso(), contagem));
+			StringBuilder sb = new StringBuilder(Messages.get(this, "desc", (int) valor, piso(), contagem, limite(h)));
 			for (Lugar l : Lugar.values()){
 				int a = amostra(l);
 				String nome = a >= 0 ? Amostra.values()[a].nome() : (a == TECIDO ? Messages.get(Renegado.class, "tecido") : Messages.get(Renegado.class, "vazio"));
@@ -984,6 +1189,169 @@ public class Renegado {
 		@Override
 		public String desc() {
 			return Messages.get(this, "desc", dispTurns());
+		}
+	}
+
+	//amostras do tronco e das pernas que duram alguns turnos
+	public static class SegundaChance extends FlavourBuff {
+		{
+			type = buffType.POSITIVE;
+		}
+
+		public float potencia = 1f;
+
+		@Override
+		public int icon() {
+			return BuffIndicator.ANKH;
+		}
+
+		@Override
+		public void tintIcon(Image icon) {
+			icon.hardlight(0.5f, 1f, 0.4f);
+		}
+
+		@Override
+		public float iconFadePercent() {
+			return Math.max(0, 1f - visualcooldown() / 50f);
+		}
+
+		@Override
+		public String desc() {
+			return Messages.get(this, "desc", Math.round(20 * potencia), dispTurns());
+		}
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put("potencia", potencia);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			potencia = bundle.getFloat("potencia");
+		}
+	}
+
+	public static class Carapaca extends FlavourBuff {
+		{
+			type = buffType.POSITIVE;
+		}
+
+		public float potencia = 1f;
+
+		@Override
+		public int icon() {
+			return BuffIndicator.ARMOR;
+		}
+
+		@Override
+		public void tintIcon(Image icon) {
+			icon.hardlight(0.8f, 0.6f, 0.3f);
+		}
+
+		@Override
+		public float iconFadePercent() {
+			return Math.max(0, 1f - visualcooldown() / 10f);
+		}
+
+		@Override
+		public String desc() {
+			return Messages.get(this, "desc", dispTurns());
+		}
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put("potencia", potencia);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			potencia = bundle.getFloat("potencia");
+		}
+	}
+
+	public static class Foco extends FlavourBuff {
+		{
+			type = buffType.POSITIVE;
+		}
+
+		@Override
+		public int icon() {
+			return BuffIndicator.DUEL_EVASIVE;
+		}
+
+		@Override
+		public float iconFadePercent() {
+			return Math.max(0, 1f - visualcooldown() / 30f);
+		}
+
+		@Override
+		public String desc() {
+			return Messages.get(this, "desc", dispTurns());
+		}
+	}
+
+	//rastro gélido: o chão que ele deixa para trás congela por dois turnos
+	public static class RastroGelido extends Buff {
+		{
+			type = buffType.POSITIVE;
+		}
+
+		private float restante = 0;
+		private int ultimo = -1;
+
+		public void deixar(float turnos){
+			restante = Math.max(restante, turnos);
+			ultimo = target.pos;
+		}
+
+		@Override
+		public boolean act() {
+			if (ultimo != -1 && ultimo != target.pos && Actor.findChar(ultimo) == null && !Dungeon.level.solid[ultimo]){
+				GameScene.add(Blob.seed(ultimo, 2, com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Freezing.class));
+			}
+			ultimo = target.pos;
+			restante -= TICK;
+			if (restante <= 0) detach();
+			spend(TICK);
+			return true;
+		}
+
+		@Override
+		public int icon() {
+			return BuffIndicator.FROST;
+		}
+
+		@Override
+		public float iconFadePercent() {
+			return Math.max(0, 1f - restante / 10f);
+		}
+
+		@Override
+		public String iconTextDisplay() {
+			return Integer.toString((int) restante);
+		}
+
+		@Override
+		public String desc() {
+			return Messages.get(this, "desc", (int) restante);
+		}
+
+		@Override
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put("restante", restante);
+			bundle.put("ultimo", ultimo);
+		}
+
+		@Override
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			restante = bundle.getFloat("restante");
+			ultimo = bundle.getInt("ultimo");
 		}
 	}
 
