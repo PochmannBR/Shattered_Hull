@@ -100,6 +100,15 @@ public class PedidoSuprimento {
 		return hero != null && hero.heroClass == HeroClass.MAGE;
 	}
 
+	//nível do lançador de torretas que a cápsula entrega. 0.9.1, decisão de Pablo em 22/11/2026: a leve
+	//começa no nível 2, com 3 disparos, e passa ao nível 3, com 5 disparos e 35 de vida, a partir da região 3.
+	//No nível 1 do jogo original o posto se desfazia depois de um único disparo.
+	public static int nivelTorreta(Tipo tipo, int regiao, int embalagem){
+		int tier = tipo == Tipo.TORRETA_LEVE ? (regiao >= 3 ? 3 : 2) : Math.min(6, 3 + regiao / 2);
+		if (embalagem >= 2) tier = Math.min(6, tier + 1);
+		return tier;
+	}
+
 	public static int regiaoAlcancada(){
 		return Math.min(5, (Math.max(1, Math.max(Statistics.deepestFloor, Dungeon.depth)) - 1) / 5 + 1);
 	}
@@ -214,6 +223,8 @@ public class PedidoSuprimento {
 		if (c == null || c.cargas < custo) return;
 		c.cargas -= custo;
 		agendar(hero, cell, tipo, false);
+		//0.9.1: guarda o custo na queda, para devolver a carga se o herói trocar de setor antes dela
+		for (Queda q : hero.buffs(Queda.class)) if (q.cell == cell && q.tipo == tipo && !q.extra && q.custo == 0) q.custo = custo;
 		//cápsula dupla: chance de uma segunda cápsula, só de impacto, no mesmo ponto
 		if (Random.Int(3) < hero.pointsInTalent(Talent.CAPSULA_DUPLA)){
 			agendar(hero, cell, tipo, true);
@@ -234,6 +245,8 @@ public class PedidoSuprimento {
 			q.tipo = tipo;
 			q.turnos = espera;
 			q.extra = extra;
+			q.setor = Dungeon.depth;
+			q.ramo = Dungeon.branch;
 			GameScene.targetedCell(cell, 0xFF8800, espera);
 		}
 	}
@@ -337,8 +350,7 @@ public class PedidoSuprimento {
 			case TORRETA_LEVE: case TORRETA_PESADA: {
 				int p = livre(cell);
 				if (p == -1) break;
-				int tier = tipo == Tipo.TORRETA_LEVE ? Math.min(3, 1 + r / 2) : Math.min(6, 3 + r / 2);
-				if (emb >= 2) tier = Math.min(6, tier + 1);
+				int tier = nivelTorreta(tipo, r, emb);
 				WandOfWarding.Ward ward = new WandOfWarding.Ward();
 				ward.pos = p;
 				ward.configurar(tier, 1 + hero.lvl / 3);
@@ -390,9 +402,18 @@ public class PedidoSuprimento {
 		public Tipo tipo;
 		public int turnos;
 		public boolean extra;
+		//0.9.1: setor em que a queda foi marcada; a cápsula não cai em outro setor
+		public int setor = -1, ramo = 0, custo = 0;
 
 		@Override
 		public boolean act() {
+			if (setor >= 0 && (setor != Dungeon.depth || ramo != Dungeon.branch)){
+				//o herói saiu do setor antes da queda: o pedido é cancelado e a carga volta
+				Cargas c = target instanceof Hero ? ((Hero) target).buff(Cargas.class) : null;
+				if (c != null && custo > 0) c.ganhar(custo);
+				detach();
+				return true;
+			}
 			turnos--;
 			if (turnos <= 0){
 				impacto(cell, tipo, extra);
@@ -403,7 +424,7 @@ public class PedidoSuprimento {
 			return true;
 		}
 
-		private static final String CELL = "cell", TIPO = "tipo", TURNOS = "turnos", EXTRA = "extra";
+		private static final String CELL = "cell", TIPO = "tipo", TURNOS = "turnos", EXTRA = "extra", SETOR = "setor", RAMO = "ramo", CUSTO = "custo";
 
 		@Override
 		public void storeInBundle(Bundle bundle) {
@@ -412,6 +433,9 @@ public class PedidoSuprimento {
 			bundle.put(TIPO, tipo);
 			bundle.put(TURNOS, turnos);
 			bundle.put(EXTRA, extra);
+			bundle.put(SETOR, setor);
+			bundle.put(RAMO, ramo);
+			bundle.put(CUSTO, custo);
 		}
 
 		@Override
@@ -421,6 +445,9 @@ public class PedidoSuprimento {
 			tipo = bundle.getEnum(TIPO, Tipo.class);
 			turnos = bundle.getInt(TURNOS);
 			extra = bundle.getBoolean(EXTRA);
+			setor = bundle.contains(SETOR) ? bundle.getInt(SETOR) : -1;
+			ramo = bundle.getInt(RAMO);
+			custo = bundle.getInt(CUSTO);
 		}
 	}
 
