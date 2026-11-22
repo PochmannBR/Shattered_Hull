@@ -599,8 +599,16 @@ public abstract class Level implements Bundlable {
 		//Shattered Hull: a classe em teste para no fim do setor 5 até ser comprada
 		if ((transition.type == LevelTransition.Type.REGULAR_EXIT || transition.type == LevelTransition.Type.BRANCH_EXIT)
 				&& com.shatteredpixel.shatteredpixeldungeon.HullStore.testeEsgotado(hero.heroClass, transition.destDepth)){
-			com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene.show(
-					new com.shatteredpixel.shatteredpixeldungeon.windows.WndFimDoTeste(transition));
+			//0.9.1: a escada é usada na thread dos atores; a janela tem de nascer na thread de desenho,
+			//senão o jogo trava com "Text measured from the actor thread"
+			final LevelTransition escada = transition;
+			Game.runOnRenderThread(new com.watabou.utils.Callback() {
+				@Override
+				public void call() {
+					com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene.show(
+							new com.shatteredpixel.shatteredpixeldungeon.windows.WndFimDoTeste(escada));
+				}
+			});
 			return false;
 		}
 

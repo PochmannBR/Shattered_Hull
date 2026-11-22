@@ -99,6 +99,8 @@ public class BombardeioOrbital extends ArmorAbility {
 		Salva s = Buff.append(hero, Salva.class);
 		s.cells = cells;
 		s.turnos = espera(hero);
+		s.setor = Dungeon.depth;
+		s.ramo = Dungeon.branch;
 		for (int c : cells) GameScene.targetedCell(c, 0xFF3300, s.turnos);
 
 		armor.charge -= chargeUse(hero);
@@ -159,9 +161,15 @@ public class BombardeioOrbital extends ArmorAbility {
 
 		public int[] cells = new int[0];
 		public int turnos;
+		//0.9.1: o bombardeio não cai num setor diferente daquele em que foi chamado
+		public int setor = -1, ramo = 0;
 
 		@Override
 		public boolean act() {
+			if (setor >= 0 && (setor != Dungeon.depth || ramo != Dungeon.branch)){
+				detach();
+				return true;
+			}
 			turnos--;
 			if (turnos <= 0){
 				for (int c : cells) cair(c);
@@ -179,6 +187,8 @@ public class BombardeioOrbital extends ArmorAbility {
 			super.storeInBundle(bundle);
 			bundle.put("cells", cells);
 			bundle.put("turnos", turnos);
+			bundle.put("setor", setor);
+			bundle.put("ramo", ramo);
 		}
 
 		@Override
@@ -186,6 +196,8 @@ public class BombardeioOrbital extends ArmorAbility {
 			super.restoreFromBundle(bundle);
 			cells = bundle.getIntArray("cells");
 			turnos = bundle.getInt("turnos");
+			setor = bundle.contains("setor") ? bundle.getInt("setor") : -1;
+			ramo = bundle.getInt("ramo");
 		}
 	}
 

@@ -136,6 +136,15 @@ public class HullTesteChefes {
 		mw.level(corpoUp);
 		mw.identify();
 
+		//0.9.1: o Exterminador fica com o transmissor orbital na mão, com os aprimoramentos da arma,
+		//porque sem ele não há pedido de suprimento nem arma acoplada
+		if (h.belongings.weapon instanceof com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff){
+			mw = (MeleeWeapon) h.belongings.weapon;
+			mw.level(corpoUp);
+			((com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff) mw).updateWand(false);
+			mw.identify();
+		}
+
 		//a arma de fogo vai para a mochila e a arma corpo a corpo fica na mão
 		Weapon fogo = null;
 		if (h.belongings.weapon instanceof ServiceRifle){
