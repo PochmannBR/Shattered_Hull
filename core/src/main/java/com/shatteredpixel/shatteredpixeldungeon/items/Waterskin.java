@@ -91,7 +91,7 @@ public class Waterskin extends Item {
 				float missingHealthPercent = 1f - (hero.HP / (float)hero.HT);
 
 				//each drop is worth 5% of total health
-				float dropsNeeded = missingHealthPercent / 0.05f;
+				float dropsNeeded = missingHealthPercent / (0.05f * com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.fatorKit(hero));
 
 				//we are getting extra heal value, scale back drops needed accordingly
 				if (dropsNeeded > 1.01f && VialOfBlood.delayBurstHealing()){
@@ -133,6 +133,19 @@ public class Waterskin extends Item {
 			}
 
 		}
+	}
+
+	//Shattered Hull: para o Sintético, o kit de saúde é um kit de reparos
+	@Override
+	public String name() {
+		if (com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero != null && com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero)) return Messages.get(this, "name_reparos");
+		return super.name();
+	}
+
+	@Override
+	public String desc() {
+		if (com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero != null && com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero)) return Messages.get(this, "desc_reparos");
+		return super.desc();
 	}
 
 	@Override

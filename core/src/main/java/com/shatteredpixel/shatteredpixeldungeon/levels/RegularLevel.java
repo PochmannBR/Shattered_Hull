@@ -612,6 +612,10 @@ public abstract class RegularLevel extends Level {
 
 			//a total of 6 pages drop randomly, the rest are specially dropped or are given at the start
 			missingPages.remove(Document.GUIDE_SEARCHING);
+			//Shattered Hull: as páginas das classes vêm com a própria classe
+			missingPages.remove(Document.GUIDE_SUPRIMENTO);
+			missingPages.remove(Document.GUIDE_SINTETICO);
+			missingPages.remove(Document.GUIDE_ASSIMILACAO);
 
 			//chance to find a page is 0/25/50/75/100% for floors 1/2/3/4/5+
 			float dropChance = 0.25f*(Dungeon.depth-1);

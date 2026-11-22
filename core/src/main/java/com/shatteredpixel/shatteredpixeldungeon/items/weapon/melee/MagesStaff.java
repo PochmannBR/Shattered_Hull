@@ -61,10 +61,15 @@ import java.util.ArrayList;
 
 public class MagesStaff extends MeleeWeapon {
 
+	//Shattered Hull: o Intendente e o Observador avançado não herdam os efeitos do Mago de Batalha e do Bruxo
+	private static final boolean SEM_MAGO_ORIGINAL = false;
+
 	private Wand wand;
 
 	public static final String AC_IMBUE = "IMBUE";
 	public static final String AC_ZAP	= "ZAP";
+	//Shattered Hull: pedido de suprimento do Exterminador
+	public static final String AC_PEDIR	= "PEDIR";
 
 	private static final float STAFF_SCALE_FACTOR = 0.75f;
 
@@ -107,6 +112,9 @@ public class MagesStaff extends MeleeWeapon {
 		actions.add(AC_IMBUE);
 		if (wand!= null && wand.curCharges > 0) {
 			actions.add( AC_ZAP );
+		}
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.usa(hero)){
+			actions.add( AC_PEDIR );
 		}
 		return actions;
 	}
@@ -151,7 +159,15 @@ public class MagesStaff extends MeleeWeapon {
 			if (cursed || hasCurseEnchant()) wand.cursed = true;
 			else                             wand.cursed = false;
 			wand.execute(hero, AC_ZAP);
+
+		} else if (action.equals(AC_PEDIR)){
+			com.shatteredpixel.shatteredpixeldungeon.items.hull.PedidoSuprimento.abrirCatalogo(hero);
 		}
+	}
+
+	//Shattered Hull: a arma especial acoplada, usada pela rajada do transmissor
+	public Wand wandAcoplada(){
+		return wand;
 	}
 
 	@Override
@@ -176,7 +192,7 @@ public class MagesStaff extends MeleeWeapon {
 		}
 
 		if (wand != null &&
-				attacker instanceof Hero && ((Hero)attacker).subClass == HeroSubClass.BATTLEMAGE) {
+				attacker instanceof Hero && ((Hero)attacker).subClass == HeroSubClass.BATTLEMAGE && SEM_MAGO_ORIGINAL) {
 			if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.5f;
 			ScrollOfRecharging.charge((Hero)attacker);
 			wand.onHit(this, attacker, defender, damage);
@@ -196,7 +212,7 @@ public class MagesStaff extends MeleeWeapon {
 		int reach = super.reachFactor(owner);
 		if (owner instanceof Hero
 				&& wand instanceof WandOfDisintegration
-				&& ((Hero)owner).subClass == HeroSubClass.BATTLEMAGE){
+				&& ((Hero)owner).subClass == HeroSubClass.BATTLEMAGE && SEM_MAGO_ORIGINAL){
 			reach += Math.round(Wand.procChanceMultiplier(owner));
 		}
 		return reach;
@@ -353,7 +369,7 @@ public class MagesStaff extends MeleeWeapon {
 			if ((!cursed && !hasCurseEnchant()) || !cursedKnown)    info += " " + wand.statsDesc();
 			else                                                    info += " " + Messages.get(this, "cursed_wand");
 
-			if (Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE){
+			if (Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE && SEM_MAGO_ORIGINAL){
 				info += "\n\n" + Messages.get(wand, "bmage_desc");
 			}
 		}

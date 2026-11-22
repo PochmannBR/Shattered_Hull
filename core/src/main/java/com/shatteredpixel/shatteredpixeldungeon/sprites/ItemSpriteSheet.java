@@ -404,12 +404,25 @@ public class ItemSpriteSheet {
 	public static final int MAGAZINE            = SHATTERED_HULL+2;
 	public static final int MAGAZINE_PARTIAL    = SHATTERED_HULL+3;
 	public static final int SUPPRESSED_PISTOL   = SHATTERED_HULL+4;
+	//Shattered Hull 0.9: itens das classes novas
+	public static final int AMOSTRA             = SHATTERED_HULL+5;
+	public static final int INJETOR_SUPRESSOR   = SHATTERED_HULL+6;
+	public static final int MUNICAO_INCENDIARIA = SHATTERED_HULL+7;
+	public static final int MUNICAO_CRIOGENICA  = SHATTERED_HULL+8;
+	public static final int MUNICAO_CHOQUE      = SHATTERED_HULL+9;
+	public static final int CELULA_ESCUDO       = SHATTERED_HULL+10;
 	static{
 		assignItemRect(SERVICE_RIFLE,    16, 16);
 		assignItemRect(RIFLE_BULLET,     11, 11);
 		assignItemRect(MAGAZINE,         11, 14);
 		assignItemRect(MAGAZINE_PARTIAL, 11, 14);
 		assignItemRect(SUPPRESSED_PISTOL, 15, 10);
+		assignItemRect(AMOSTRA, 16, 16);
+		assignItemRect(INJETOR_SUPRESSOR, 16, 16);
+		assignItemRect(MUNICAO_INCENDIARIA, 16, 16);
+		assignItemRect(MUNICAO_CRIOGENICA, 16, 16);
+		assignItemRect(MUNICAO_CHOQUE, 16, 16);
+		assignItemRect(CELULA_ESCUDO, 16, 16);
 	}
 
 	private static final int WANDS              =                           xy(1, 14);  //16 slots

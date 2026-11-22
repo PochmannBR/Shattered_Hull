@@ -56,12 +56,17 @@ public class PotionOfHealing extends Potion {
 	}
 
 	public static void heal( Char ch ){
+		//Shattered Hull: injetores de cura não funcionam no Sintético
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(ch)){
+			com.shatteredpixel.shatteredpixeldungeon.utils.GLog.w(com.shatteredpixel.shatteredpixeldungeon.messages.Messages.get(com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.class, "injetor"));
+			return;
+		}
 		if (ch == Dungeon.hero && Dungeon.isChallenged(Challenges.NO_HEALING)){
 			pharmacophobiaProc(Dungeon.hero);
 		} else {
 			//starts out healing 30 hp, equalizes with hero health total at level 11
 			Healing healing = Buff.affect(ch, Healing.class);
-			healing.setHeal((int) (0.8f * ch.HT + 14), 0.25f, 0, true);
+			healing.setHeal((int) ((0.8f * ch.HT + 14) * com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.fatorCura(ch)), 0.25f, 0, true);
 			if (ch == Dungeon.hero){
 				GLog.p( Messages.get(PotionOfHealing.class, "heal") );
 			}

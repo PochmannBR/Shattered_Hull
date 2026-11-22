@@ -53,7 +53,7 @@ public class Regeneration extends Buff {
 				Buff.affect(Dungeon.hero, ChaoticCenser.CenserGasTracker.class);
 			}
 
-			if (regenOn() && target.HP < regencap() && !((Hero)target).isStarving()) {
+			if (regenOn() && target.HP < regencap() && !((Hero)target).isStarving() && !com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.economia(target)) {
 				boolean chaliceCursed = false;
 				int chaliceLevel = -1;
 				if (target.buff(MagicImmune.class) == null) {

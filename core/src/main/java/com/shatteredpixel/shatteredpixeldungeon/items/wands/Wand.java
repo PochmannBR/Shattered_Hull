@@ -75,6 +75,9 @@ import java.util.ArrayList;
 
 public abstract class Wand extends Item {
 
+	//Shattered Hull: o Intendente e o Observador avançado não herdam os efeitos do Mago de Batalha e do Bruxo
+	private static final boolean SEM_MAGO_ORIGINAL = false;
+
 	public static final String AC_ZAP	= "ZAP";
 
 	private static final float TIME_TO_ZAP	= 1f;
@@ -208,13 +211,19 @@ public abstract class Wand extends Item {
 
 	//TODO Consider externalizing char awareness buff
 	protected static void wandProc(Char target, int wandLevel, int chargesUsed){
+		//Shattered Hull: munição especial do Exterminador
+		if (Dungeon.hero != null && target != Dungeon.hero
+				&& Dungeon.hero.buff(com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WildMagic.WildMagicTracker.class) == null){
+			com.shatteredpixel.shatteredpixeldungeon.items.hull.MunicaoEspecial.Ativa m = Dungeon.hero.buff(com.shatteredpixel.shatteredpixeldungeon.items.hull.MunicaoEspecial.Ativa.class);
+			if (m != null) m.disparar(target);
+		}
 		if (Dungeon.hero.hasTalent(Talent.ARCANE_VISION)) {
 			int dur = 5 + 5*Dungeon.hero.pointsInTalent(Talent.ARCANE_VISION);
 			Buff.append(Dungeon.hero, TalismanOfForesight.CharAwareness.class, dur).charID = target.id();
 		}
 
 		if (target != Dungeon.hero &&
-				Dungeon.hero.subClass == HeroSubClass.WARLOCK &&
+				Dungeon.hero.subClass == HeroSubClass.WARLOCK && SEM_MAGO_ORIGINAL &&
 				//standard 1 - 0.92^x chance, plus 7%. Starts at 15%
 				Random.Float() > (Math.pow(0.92f, (wandLevel*chargesUsed)+1) - 0.07f)){
 			SoulMark.prolong(target, SoulMark.class, SoulMark.DURATION + wandLevel);
@@ -306,7 +315,7 @@ public abstract class Wand extends Item {
 			desc += "\n\n" + Messages.get(Wand.class, "not_cursed");
 		}
 
-		if (Dungeon.hero != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE){
+		if (Dungeon.hero != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE && SEM_MAGO_ORIGINAL){
 			desc += "\n\n" + Messages.get(this, "bmage_desc");
 		}
 

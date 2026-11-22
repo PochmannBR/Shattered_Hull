@@ -254,6 +254,14 @@ public class WandOfWarding extends Wand {
 			return Messages.get(this, "name_" + tier );
 		}
 
+		//Shattered Hull: torreta do pedido de suprimento do Exterminador, já no nível pedido
+		public void configurar(int tier, int wandLevel){
+			this.wandLevel = Math.max(this.wandLevel, wandLevel);
+			while (this.tier < tier){
+				upgrade(wandLevel);
+			}
+		}
+
 		public void upgrade(int wandLevel ){
 			if (this.wandLevel < wandLevel){
 				this.wandLevel = wandLevel;

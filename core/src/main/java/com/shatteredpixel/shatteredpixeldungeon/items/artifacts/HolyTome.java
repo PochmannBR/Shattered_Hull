@@ -65,6 +65,16 @@ public class HolyTome extends Artifact {
 	}
 
 	public static final String AC_CAST = "CAST";
+	//Shattered Hull: ordens para o drone do Sintético
+	public static final String AC_COMANDAR = "COMANDAR";
+
+	@Override
+	public String status() {
+		if (Dungeon.hero != null && com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero) && isEquipped(Dungeon.hero)){
+			return Integer.toString((int)com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.energia(Dungeon.hero));
+		}
+		return super.status();
+	}
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -74,6 +84,9 @@ public class HolyTome extends Artifact {
 				&& hero.buff(MagicImmune.class) == null) {
 			actions.add(AC_CAST);
 		}
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(hero) && com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DroneSintetico.ativo() != null){
+			actions.add(AC_COMANDAR);
+		}
 		return actions;
 	}
 
@@ -81,6 +94,22 @@ public class HolyTome extends Artifact {
 	public void execute( Hero hero, String action ) {
 
 		super.execute(hero, action);
+
+		if (action.equals(AC_COMANDAR)){
+			final com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DroneSintetico drone = com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.DroneSintetico.ativo();
+			if (drone == null) return;
+			GameScene.selectCell(new com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector.Listener() {
+				@Override
+				public void onSelect(Integer cell) {
+					if (cell != null) drone.directTocell(cell);
+				}
+				@Override
+				public String prompt() {
+					return Messages.get(HolyTome.class, "comandar_prompt");
+				}
+			});
+			return;
+		}
 
 		if (hero.buff(MagicImmune.class) != null) return;
 
@@ -144,6 +173,12 @@ public class HolyTome extends Artifact {
 	}
 
 	public boolean canCast( Hero hero, ClericSpell spell ){
+		//Shattered Hull: o Sintético paga com a reserva de energia
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(hero)){
+			return isEquipped(hero) && !cursed
+					&& com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.energia(hero) >= spell.chargeUse(hero)
+					&& spell.canCast(hero);
+		}
 		return (isEquipped(hero) || (Dungeon.hero.hasTalent(Talent.LIGHT_READING) && hero.belongings.contains(this)))
 				&& hero.buff(MagicImmune.class) == null
 				&& charge >= spell.chargeUse(hero)
@@ -151,6 +186,11 @@ public class HolyTome extends Artifact {
 	}
 
 	public void spendCharge( float chargesSpent ){
+		if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero)){
+			com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.gastar(Dungeon.hero, chargesSpent);
+			updateQuickslot();
+			return;
+		}
 		partialCharge -= chargesSpent;
 		while (partialCharge < 0){
 			charge--;

@@ -101,6 +101,16 @@ public class Fabricator extends NPC {
 		return this;
 	}
 
+
+	//Shattered Hull: logística do Intendente, 10% de desconto por ponto
+	private int preco(){
+		int p = type.price;
+		if (Dungeon.hero != null){
+			p = Math.round(p * (1f - 0.1f * Dungeon.hero.pointsInTalent(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.LOGISTICA)));
+		}
+		return p;
+	}
+
 	@Override
 	public Notes.Landmark landmark() {
 		return Notes.Landmark.FABRICATOR;
@@ -154,6 +164,13 @@ public class Fabricator extends NPC {
 				}
 				return Generator.randomMissile();
 			case MEDICAL:
+				//Shattered Hull: o Renegado recebe o injetor supressor, e o Sintético, biomassa para o kit de reparos
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.e(Dungeon.hero)){
+					return new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor();
+				}
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero)){
+					return new com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop().quantity(10);
+				}
 				return new PotionOfHealing();
 			case ARMORY:
 				Armor armor = Generator.randomArmor();
@@ -173,6 +190,12 @@ public class Fabricator extends NPC {
 				}
 				return Messages.get(this, "product_missile");
 			case MEDICAL:
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.e(Dungeon.hero)){
+					return new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor().name();
+				}
+				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero)){
+					return Messages.get(this, "product_biomassa");
+				}
 				return Messages.get(this, "product_medical");
 			case ARMORY:
 				return Messages.get(this, "product_armor");
@@ -189,8 +212,8 @@ public class Fabricator extends NPC {
 		String msg = Messages.get(this, "panel", Dungeon.gold, charges);
 		if (charges <= 0){
 			msg += "\n\n" + Messages.get(this, "depleted");
-		} else if (Dungeon.gold < type.price){
-			msg += "\n\n" + Messages.get(this, "not_enough", type.price - Dungeon.gold);
+		} else if (Dungeon.gold < preco()){
+			msg += "\n\n" + Messages.get(this, "not_enough", preco() - Dungeon.gold);
 		}
 
 		final String panel = msg;
@@ -205,13 +228,13 @@ public class Fabricator extends NPC {
 
 	private void showPanel( String product, String msg ){
 		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()), msg,
-				Messages.get(this, "craft", product, type.price),
+				Messages.get(this, "craft", product, preco()),
 				Messages.get(this, "dismantle"),
 				Messages.get(this, "leave")){
 			@Override
 			protected boolean enabled( int index ) {
 				if (index == 0){
-					return charges > 0 && Dungeon.gold >= type.price;
+					return charges > 0 && Dungeon.gold >= preco();
 				}
 				return true;
 			}
@@ -274,10 +297,10 @@ public class Fabricator extends NPC {
 	}
 
 	private void craft(){
-		if (charges <= 0 || Dungeon.gold < type.price) return;
+		if (charges <= 0 || Dungeon.gold < preco()) return;
 
-		Dungeon.gold -= type.price;
-		Catalog.countUses(Gold.class, type.price);
+		Dungeon.gold -= preco();
+		Catalog.countUses(Gold.class, preco());
 		charges--;
 
 		Item item = makeProduct();

@@ -181,6 +181,7 @@ public class Item implements Bundlable {
 	}
 	
 	public void execute( Hero hero ) {
+		if (!com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.podeUsarItens(hero)) return;
 		String action = defaultAction();
 		if (action != null) {
 			execute(hero, defaultAction());
