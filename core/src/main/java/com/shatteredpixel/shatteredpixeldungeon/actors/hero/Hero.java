@@ -2321,6 +2321,11 @@ public class Hero extends Char {
 		GameScene.flash(0x8040C0FF);
 		Sample.INSTANCE.play(Assets.Sounds.TELEPORT);
 		GLog.p(Messages.get(this, "continue_revive"));
+
+		//0.9.2: se o herói caiu durante a própria ação, como na assimilação do Renegado por uma habilidade,
+		//o next() daquela ação não valeu, porque ele estava sem vida, e o turno ficava preso nele.
+		//Agora que voltou, libera a vez para os outros atores.
+		next();
 	}
 	
 	public static void reallyDie( Object cause ) {
