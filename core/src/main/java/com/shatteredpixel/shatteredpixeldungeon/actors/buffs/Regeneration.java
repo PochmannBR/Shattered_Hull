@@ -53,6 +53,15 @@ public class Regeneration extends Buff {
 				Buff.affect(Dungeon.hero, ChaoticCenser.CenserGasTracker.class);
 			}
 
+			//Shattered Hull 0.9.3: no modo de economia o Sintético não regenera, então descansar
+			//até curar nunca terminaria. O descanso para e o jogo avisa.
+			if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.economia(target)
+					&& ((Hero) target).resting && target.HP < regencap()) {
+				((Hero) target).resting = false;
+				com.shatteredpixel.shatteredpixeldungeon.utils.GLog.w(com.shatteredpixel.shatteredpixeldungeon.messages.Messages.get(
+						com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.class, "economia_descanso"));
+			}
+
 			if (regenOn() && target.HP < regencap() && !((Hero)target).isStarving() && !com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.economia(target)) {
 				boolean chaliceCursed = false;
 				int chaliceLevel = -1;
