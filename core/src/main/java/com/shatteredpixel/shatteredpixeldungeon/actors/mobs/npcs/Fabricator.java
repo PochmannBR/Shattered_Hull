@@ -51,9 +51,34 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Bundle;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ArcaneBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.Bomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.FrostBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ShrapnelBomb;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico;
+import com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHaste;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfPurity;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.ElixirOfArcaneArmor;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfShielding;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfStamina;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.IncendiaryDart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.ParalyticDart;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndTitledMessage;
+import com.watabou.utils.Reflection;
+import java.util.ArrayList;
 
-//Shattered Hull: fabricador da Vigília-7. É raro e cada um fabrica um único
-//tipo de item, com energia para poucas fabricações. Custa Laztro.
+//Shattered Hull: fabricador da Vigília-7. É raro e cada um fabrica uma linha
+//de itens, com energia para poucas fabricações. Custa Laztro. Desde a 0.9.3,
+//o jogador escolhe o item num catálogo que cresce com a região.
 public class Fabricator extends NPC {
 
 	public enum Type {
@@ -102,15 +127,6 @@ public class Fabricator extends NPC {
 	}
 
 
-	//Shattered Hull: logística do Intendente, 10% de desconto por ponto
-	private int preco(){
-		int p = type.price;
-		if (Dungeon.hero != null){
-			p = Math.round(p * (1f - 0.1f * Dungeon.hero.pointsInTalent(com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent.LOGISTICA)));
-		}
-		return p;
-	}
-
 	@Override
 	public Notes.Landmark landmark() {
 		return Notes.Landmark.FABRICATOR;
@@ -155,51 +171,168 @@ public class Fabricator extends NPC {
 		return Messages.get(this, "desc") + "\n\n" + Messages.get(this, "desc_" + type.name().toLowerCase());
 	}
 
-	private Item makeProduct(){
-		switch (type){
-			case AMMO: default:
-				if (Dungeon.hero.belongings.getItem(ServiceRifle.class) != null
-						|| Dungeon.hero.belongings.getItem(com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol.class) != null){
-					return new Magazine();
-				}
-				return Generator.randomMissile();
-			case MEDICAL:
-				//Shattered Hull: o Renegado recebe o injetor supressor, e o Sintético, biomassa para o kit de reparos
-				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.e(Dungeon.hero)){
-					return new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor();
-				}
-				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero)){
-					return new com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop().quantity(10);
-				}
-				return new PotionOfHealing();
-			case ARMORY:
-				Armor armor = Generator.randomArmor();
-				armor.cursed = false;
-				if (armor.hasCurseGlyph()) armor.inscribe(null);
-				if (armor.level() < 0) armor.level(0);
-				return armor;
+	//Shattered Hull 0.9.3: cada fabricador oferece o catálogo da região onde está
+	//e das anteriores. O jogador escolhe o item, e cada um tem o próprio preço.
+	public static class Oferta {
+		public final String id;
+		public final int preco;
+		public Oferta( String id, int preco ){
+			this.id = id;
+			this.preco = preco;
 		}
 	}
 
-	private String productName(){
+	public static final int OFERTAS_POR_PAGINA = 6;
+
+	public static final int PRECO_REVESTIMENTO    = 650;
+	public static final int PRECO_REVESTIMENTO_P1 = 900;
+	public static final int PRECO_REVESTIMENTO_P2 = 1200;
+
+	public static int regiao(){
+		return Math.max(1, Math.min(5, (Dungeon.depth - 1) / 5 + 1));
+	}
+
+	private static boolean temArmaDeFogo(){
+		return Dungeon.hero.belongings.getItem(ServiceRifle.class) != null
+				|| Dungeon.hero.belongings.getItem(SuppressedPistol.class) != null;
+	}
+
+	public ArrayList<Oferta> catalogo(){
+		ArrayList<Oferta> l = new ArrayList<>();
+		int r = regiao();
+		boolean sintetico = Sintetico.e(Dungeon.hero);
+		boolean renegado = Renegado.e(Dungeon.hero);
 		switch (type){
 			case AMMO: default:
-				if (Dungeon.hero.belongings.getItem(ServiceRifle.class) != null
-						|| Dungeon.hero.belongings.getItem(com.shatteredpixel.shatteredpixeldungeon.items.hull.SuppressedPistol.class) != null){
-					return new Magazine().name();
+				if (temArmaDeFogo()) l.add(new Oferta("carregador", 250));
+				l.add(new Oferta("arremesso", 200));
+				l.add(new Oferta("dardos", 150));
+				if (r >= 2){
+					l.add(new Oferta("bomba", 300));
+					l.add(new Oferta("dardos_incendiarios", 250));
 				}
-				return Messages.get(this, "product_missile");
+				if (r >= 3){
+					l.add(new Oferta("bomba_gelo", 350));
+					l.add(new Oferta("bomba_estilhacos", 400));
+				}
+				if (r >= 4){
+					l.add(new Oferta("dardos_paraliticos", 350));
+					l.add(new Oferta("bomba_pulso", 400));
+				}
+				if (r >= 5 && temArmaDeFogo()){
+					l.add(new Oferta("carregadores", 450));
+				}
+				break;
 			case MEDICAL:
-				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Renegado.e(Dungeon.hero)){
-					return new com.shatteredpixel.shatteredpixeldungeon.items.hull.InjetorSupressor().name();
+				if (!sintetico) l.add(new Oferta("regeneracao", 250));
+				if (renegado) l.add(new Oferta("supressor", 250));
+				l.add(new Oferta("biomassa", 150));
+				if (!sintetico) l.add(new Oferta("racao", 150));
+				if (r >= 2){
+					l.add(new Oferta("antitoxina", 200));
+					l.add(new Oferta("adrenalina", 250));
 				}
-				if (com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.e(Dungeon.hero)){
-					return Messages.get(this, "product_biomassa");
+				if (r >= 3){
+					l.add(new Oferta("blindagem", 350));
 				}
-				return Messages.get(this, "product_medical");
+				if (r >= 4){
+					l.add(new Oferta("vigor", 300));
+					l.add(new Oferta("campo", 450));
+				}
+				break;
 			case ARMORY:
-				return Messages.get(this, "product_armor");
+				l.add(new Oferta("armadura", 450));
+				l.add(new Oferta("arma", 450));
+				if (r >= 3){
+					l.add(new Oferta("revestimento", PRECO_REVESTIMENTO));
+				}
+				if (r >= 5){
+					l.add(new Oferta("arma_modificada", 700));
+				}
+				break;
 		}
+		return l;
+	}
+
+	//Shattered Hull: logística do Intendente, 10% de desconto por ponto
+	public static int desconto( int preco ){
+		if (Dungeon.hero != null){
+			preco = Math.round(preco * (1f - 0.1f * Dungeon.hero.pointsInTalent(Talent.LOGISTICA)));
+		}
+		return preco;
+	}
+
+	public static String nomeOferta( Oferta o ){
+		return Messages.get(Fabricator.class, "oferta_" + o.id);
+	}
+
+	private static String rotulo( Oferta o ){
+		String chave = o.id.equals("revestimento") ? "oferta_desde" : "oferta";
+		return Messages.capitalize(Messages.get(Fabricator.class, chave, nomeOferta(o), desconto(o.preco)));
+	}
+
+	public static Item produzir( String id ){
+		switch (id){
+			case "carregador": return new Magazine();
+			case "carregadores": return new Magazine().quantity(2);
+			case "arremesso": return arremessoLimpo();
+			case "dardos": return new Dart().quantity(3);
+			case "dardos_incendiarios": return new IncendiaryDart().quantity(3);
+			case "dardos_paraliticos": return new ParalyticDart().quantity(3);
+			case "bomba": return new Bomb();
+			case "bomba_gelo": return new FrostBomb();
+			case "bomba_estilhacos": return new ShrapnelBomb();
+			case "bomba_pulso": return new ArcaneBomb();
+			case "regeneracao": return new PotionOfHealing();
+			case "supressor": return new InjetorSupressor();
+			case "biomassa": return new Dewdrop().quantity(10);
+			case "racao": return new Food();
+			case "antitoxina": return new PotionOfPurity();
+			case "adrenalina": return new PotionOfHaste();
+			case "blindagem": return new PotionOfShielding();
+			case "vigor": return new PotionOfStamina();
+			case "campo": return new ElixirOfArcaneArmor();
+			case "armadura": return armaduraLimpa();
+			case "arma": return armaLimpa();
+			case "arma_modificada": {
+				MeleeWeapon w = armaLimpa();
+				w.enchant(Weapon.Enchantment.random());
+				return w;
+			}
+			default: return null;
+		}
+	}
+
+	private static Item arremessoLimpo(){
+		Item it = Generator.randomMissile();
+		it.cursed = false;
+		if (it instanceof Weapon && ((Weapon) it).hasCurseEnchant()) ((Weapon) it).enchant(null);
+		if (it.level() < 0) it.level(0);
+		return it;
+	}
+
+	private static Armor armaduraLimpa(){
+		Armor armor = Generator.randomArmor();
+		armor.cursed = false;
+		if (armor.hasCurseGlyph()) armor.inscribe(null);
+		if (armor.level() < 0) armor.level(0);
+		return armor;
+	}
+
+	private static MeleeWeapon armaLimpa(){
+		MeleeWeapon w = Generator.randomWeapon();
+		w.cursed = false;
+		if (w.hasCurseEnchant()) w.enchant(null);
+		if (w.level() < 0) w.level(0);
+		return w;
+	}
+
+	//armadura sorteada do setor com o revestimento escolhido e o reforço pago
+	public static Armor armaduraRevestida( Class<? extends Armor.Glyph> glyph, int reforco ){
+		Armor armor = armaduraLimpa();
+		armor.level(reforco);
+		armor.inscribe((Armor.Glyph) Reflection.newInstance(glyph));
+		return armor;
 	}
 
 	@Override
@@ -207,44 +340,156 @@ public class Fabricator extends NPC {
 		if (c != Dungeon.hero){
 			return true;
 		}
-
-		final String product = productName();
-		String msg = Messages.get(this, "panel", Dungeon.gold, charges);
-		if (charges <= 0){
-			msg += "\n\n" + Messages.get(this, "depleted");
-		} else if (Dungeon.gold < preco()){
-			msg += "\n\n" + Messages.get(this, "not_enough", preco() - Dungeon.gold);
-		}
-
-		final String panel = msg;
 		Game.runOnRenderThread(new Callback() {
 			@Override
 			public void call() {
-				showPanel(product, panel);
+				showPanel(0);
 			}
 		});
 		return true;
 	}
 
-	private void showPanel( String product, String msg ){
+	private void showPanel( final int pagina ){
+		final ArrayList<Oferta> todas = catalogo();
+		final int inicio = pagina * OFERTAS_POR_PAGINA;
+		final int fimPag = Math.min(todas.size(), inicio + OFERTAS_POR_PAGINA);
+		final boolean temMais = fimPag < todas.size() || pagina > 0;
+
+		final ArrayList<Oferta> nestaPagina = new ArrayList<>(todas.subList(inicio, fimPag));
+		ArrayList<String> botoes = new ArrayList<>();
+		for (Oferta o : nestaPagina) botoes.add(rotulo(o));
+		if (temMais) botoes.add(Messages.get(this, fimPag < todas.size() ? "mais" : "inicio"));
+		botoes.add(Messages.get(this, "dismantle"));
+		botoes.add(Messages.get(this, "leave"));
+
+		String msg = Messages.get(this, "panel", Dungeon.gold, charges);
+		if (charges <= 0){
+			msg += "\n\n" + Messages.get(this, "depleted");
+		}
+
+		final int nOfertas = nestaPagina.size();
 		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()), msg,
-				Messages.get(this, "craft", product, preco()),
-				Messages.get(this, "dismantle"),
-				Messages.get(this, "leave")){
+				botoes.toArray(new String[0])){
 			@Override
 			protected boolean enabled( int index ) {
-				if (index == 0){
-					return charges > 0 && Dungeon.gold >= preco();
+				if (index < nOfertas){
+					return charges > 0 && Dungeon.gold >= desconto(nestaPagina.get(index).preco);
 				}
 				return true;
 			}
 
 			@Override
 			protected void onSelect( int index ) {
-				if (index == 0) craft();
-				else if (index == 1) chooseDismantle();
+				if (index < nOfertas){
+					Oferta o = nestaPagina.get(index);
+					if (o.id.equals("revestimento")) escolherGrupo();
+					else craft(o.id, o.preco);
+					return;
+				}
+				int resto = index - nOfertas;
+				if (temMais){
+					if (resto == 0){
+						showPanel(fimPag < todas.size() ? pagina + 1 : 0);
+						return;
+					}
+					resto--;
+				}
+				if (resto == 0) chooseDismantle();
 			}
 		});
+	}
+
+	private void escolherGrupo(){
+		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
+				Messages.get(this, "escolha_grupo"),
+				Messages.get(this, "grupo_comum"),
+				Messages.get(this, "grupo_incomum"),
+				Messages.get(this, "grupo_raro"),
+				Messages.get(this, "voltar")){
+			@Override
+			protected void onSelect( int index ) {
+				switch (index){
+					case 0: escolherRevestimento(Armor.Glyph.common); break;
+					case 1: escolherRevestimento(Armor.Glyph.uncommon); break;
+					case 2: escolherRevestimento(Armor.Glyph.rare); break;
+					default: showPanel(0);
+				}
+			}
+		});
+	}
+
+	public static String nomeRevestimento( Class<?> glyph ){
+		return ((Armor.Glyph) Reflection.newInstance(glyph)).name(Messages.get(Fabricator.class, "armadura"));
+	}
+
+	private void escolherRevestimento( final Class<?>[] grupo ){
+		String[] botoes = new String[grupo.length + 1];
+		for (int i = 0; i < grupo.length; i++){
+			botoes[i] = Messages.capitalize(nomeRevestimento(grupo[i]));
+		}
+		botoes[grupo.length] = Messages.get(this, "voltar");
+		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
+				Messages.get(this, "escolha_revestimento"), botoes){
+			@Override
+			protected boolean hasInfo( int index ) {
+				return index < grupo.length;
+			}
+
+			@Override
+			protected void onInfo( int index ) {
+				Armor.Glyph g = (Armor.Glyph) Reflection.newInstance(grupo[index]);
+				GameScene.show(new WndTitledMessage(sprite(),
+						Messages.titleCase(nomeRevestimento(grupo[index])), g.desc()));
+			}
+
+			@Override
+			protected void onSelect( int index ) {
+				if (index < grupo.length) escolherReforco((Class<? extends Armor.Glyph>) grupo[index]);
+				else escolherGrupo();
+			}
+		});
+	}
+
+	public static int[] precosReforco(){
+		if (regiao() >= 5){
+			return new int[]{PRECO_REVESTIMENTO, PRECO_REVESTIMENTO_P1, PRECO_REVESTIMENTO_P2};
+		}
+		return new int[]{PRECO_REVESTIMENTO, PRECO_REVESTIMENTO_P1};
+	}
+
+	private void escolherReforco( final Class<? extends Armor.Glyph> glyph ){
+		final int[] precos = precosReforco();
+		String[] botoes = new String[precos.length + 1];
+		for (int i = 0; i < precos.length; i++){
+			botoes[i] = Messages.get(this, "reforco_" + i, desconto(precos[i]));
+		}
+		botoes[precos.length] = Messages.get(this, "voltar");
+		GameScene.show(new WndOptions(sprite(), Messages.titleCase(name()),
+				Messages.get(this, "escolha_reforco", nomeRevestimento(glyph)), botoes){
+			@Override
+			protected boolean enabled( int index ) {
+				if (index < precos.length){
+					return charges > 0 && Dungeon.gold >= desconto(precos[index]);
+				}
+				return true;
+			}
+
+			@Override
+			protected void onSelect( int index ) {
+				if (index < precos.length){
+					if (charges <= 0 || Dungeon.gold < desconto(precos[index])) return;
+					entregar(armaduraRevestida(glyph, index), desconto(precos[index]));
+				} else {
+					escolherRevestimento(grupoDe(glyph));
+				}
+			}
+		});
+	}
+
+	private static Class<?>[] grupoDe( Class<?> glyph ){
+		for (Class<?> c : Armor.Glyph.uncommon) if (c == glyph) return Armor.Glyph.uncommon;
+		for (Class<?> c : Armor.Glyph.rare) if (c == glyph) return Armor.Glyph.rare;
+		return Armor.Glyph.common;
 	}
 
 	//Shattered Hull: desmontar converte um item da mochila em Laztro.
@@ -296,14 +541,19 @@ public class Fabricator extends NPC {
 		GLog.p( Messages.get(Fabricator.class, "dismantled", name, value) );
 	}
 
-	private void craft(){
-		if (charges <= 0 || Dungeon.gold < preco()) return;
+	private void craft( String id, int precoBase ){
+		int preco = desconto(precoBase);
+		if (charges <= 0 || Dungeon.gold < preco) return;
+		Item item = produzir(id);
+		if (item == null) return;
+		entregar(item, preco);
+	}
 
-		Dungeon.gold -= preco();
-		Catalog.countUses(Gold.class, preco());
+	private void entregar( Item item, int preco ){
+		Dungeon.gold -= preco;
+		Catalog.countUses(Gold.class, preco);
 		charges--;
 
-		Item item = makeProduct();
 		item.identify();
 		if (!item.doPickUp( Dungeon.hero )) {
 			Dungeon.level.drop( item, Dungeon.hero.pos ).sprite.drop();
