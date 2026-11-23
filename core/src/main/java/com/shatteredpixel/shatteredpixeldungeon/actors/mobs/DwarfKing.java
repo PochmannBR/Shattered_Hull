@@ -213,7 +213,7 @@ public class DwarfKing extends Mob {
 					spend(3 * TICK);
 					summonsMade += 2;
 					return true;
-				} else if (shielding() <= 300 && summonsMade < 12){
+				} else if (shielding() <= limiteOnda(6) && summonsMade < 12){
 					if (summonsMade == 6) {
 						sprite.centerEmitter().start(Speck.factory(Speck.SCREAM), 0.4f, 2);
 						Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
@@ -229,7 +229,7 @@ public class DwarfKing extends Mob {
 					summonsMade += 3;
 					spend(3*TICK);
 					return true;
-				} else if (shielding() <= 150 && summonsMade < 18) {
+				} else if (shielding() <= limiteOnda(12) && summonsMade < 18) {
 					if (summonsMade == 12) {
 						sprite.centerEmitter().start(Speck.factory(Speck.SCREAM), 0.4f, 2);
 						Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
@@ -263,7 +263,7 @@ public class DwarfKing extends Mob {
 					spend(3 * TICK);
 					summonsMade++;
 					return true;
-				} else if (shielding() <= 200 && summonsMade < 8) {
+				} else if (shielding() <= limiteOnda(4) && summonsMade < 8) {
 					if (summonsMade == 4) {
 						sprite.centerEmitter().start(Speck.factory(Speck.SCREAM), 0.4f, 2);
 						Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
@@ -277,7 +277,7 @@ public class DwarfKing extends Mob {
 					summonsMade++;
 					spend(TICK);
 					return true;
-				} else if (shielding() <= 100 && summonsMade < 12) {
+				} else if (shielding() <= limiteOnda(8) && summonsMade < 12) {
 					sprite.centerEmitter().start(Speck.factory(Speck.SCREAM), 0.4f, 2);
 					Sample.INSTANCE.play(Assets.Sounds.CHALLENGE);
 					yell(Messages.get(this, "wave_3"));
@@ -298,6 +298,15 @@ public class DwarfKing extends Mob {
 		}
 
 		return super.act();
+	}
+
+	//Shattered Hull 0.9.4: a curva de dificuldade aumenta a vida do Varga, e com ela a barreira.
+	//As ondas eram chamadas com a barreira em valores fixos, 200 e 100, pensados para 300 de vida;
+	//com 312 de vida, os quatro primeiros tripulantes mortos deixavam a barreira em 208, a segunda
+	//onda nunca vinha e a luta travava. Agora o limite é a barreira cheia menos o dano dos mortos.
+	private int limiteOnda( int mortos ){
+		int porMorto = HT / (Dungeon.isChallenged(Challenges.STRONGER_BOSSES) ? 18 : 12);
+		return HT - mortos * porMorto;
 	}
 
 	private boolean summonSubject( int delay ){

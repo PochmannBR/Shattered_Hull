@@ -62,6 +62,14 @@ public class Regeneration extends Buff {
 						com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.class, "economia_descanso"));
 			}
 
+			//Shattered Hull 0.9.4: na luta contra um chefe o corpo para de se recuperar quando ninguém
+			//luta, e descansar até curar também nunca terminava. O descanso para e o jogo avisa.
+			if (!regenOn() && ((Hero) target).resting && target.HP < regencap()) {
+				((Hero) target).resting = false;
+				com.shatteredpixel.shatteredpixeldungeon.utils.GLog.w(com.shatteredpixel.shatteredpixeldungeon.messages.Messages.get(
+						Regeneration.class, "chefe_descanso"));
+			}
+
 			if (regenOn() && target.HP < regencap() && !((Hero)target).isStarving() && !com.shatteredpixel.shatteredpixeldungeon.items.hull.Sintetico.economia(target)) {
 				boolean chaliceCursed = false;
 				int chaliceLevel = -1;
